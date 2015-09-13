@@ -19,7 +19,7 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  boxSizing, hitTest, overrideCursor
+  hitTest, overrideCursor
 } from 'phosphor-domutil';
 
 import {
@@ -225,7 +225,7 @@ class DockPanel extends BoxPanel {
   dispose(): void {
     this._abortDrag();
     this._root = null;
-    this._dockItems.length = 0;
+    this._items.length = 0;
     super.dispose();
   }
 
@@ -367,7 +367,7 @@ class DockPanel extends BoxPanel {
 
     // Create and add the dock item for the widget.
     var tab = DockPanel.getTab(widget);
-    this._dockItems.push({ tab: tab, widget: widget, panel: panel });
+    this._items.push({ tab: tab, widget: widget, panel: panel });
 
     // Add the widget to the tab panel.
     panel.stack.addChild(widget);
@@ -390,7 +390,7 @@ class DockPanel extends BoxPanel {
 
     // Create and add the dock item for the widget.
     var tab = DockPanel.getTab(widget);
-    this._dockItems.push({ tab: tab, widget: widget, panel: panel });
+    this._items.push({ tab: tab, widget: widget, panel: panel });
 
     // Add the widget to the tab panel.
     panel.stack.addChild(widget);
@@ -434,7 +434,7 @@ class DockPanel extends BoxPanel {
 
     // Create and add the dock item for the widget.
     var tab = DockPanel.getTab(widget);
-    this._dockItems.push({ tab: tab, widget: widget, panel: item.panel });
+    this._items.push({ tab: tab, widget: widget, panel: item.panel });
 
     // Add the widget to the tab panel.
     var i = item.panel.childIndex(item.widget);
@@ -764,7 +764,7 @@ class DockPanel extends BoxPanel {
    * Returns `undefined` if there is no matching item.
    */
   private _findItemByTab(tab: Tab): IDockItem {
-    return arrays.find(this._dockItems, item => item.tab === tab);
+    return arrays.find(this._items, item => item.tab === tab);
   }
 
   /**
@@ -773,7 +773,7 @@ class DockPanel extends BoxPanel {
    * Returns `undefined` if there is no matching item.
    */
   private _findItemByWidget(widget: Widget): IDockItem {
-    return arrays.find(this._dockItems, item => item.widget === widget);
+    return arrays.find(this._items, item => item.widget === widget);
   }
 
   /**
@@ -876,7 +876,7 @@ class DockPanel extends BoxPanel {
       return;
     }
     this._abortDrag();
-    arrays.remove(this._dockItems, item);
+    arrays.remove(this._items, item);
     item.panel.tabs.removeTab(item.tab);
     if (item.panel.stack.childCount === 0) {
       this._removePanel(item.panel);
@@ -885,8 +885,8 @@ class DockPanel extends BoxPanel {
 
   private _root: DockSplitPanel;
   private _ignoreRemoved = false;
+  private _items: IDockItem[] = [];
   private _dragData: IDragData = null;
-  private _dockItems: IDockItem[] = [];
 }
 
 
@@ -1097,7 +1097,7 @@ class DockTabPanel extends BoxPanel {
   showOverlay(clientX: number, clientY: number): void {
     this._clearOverlayTimer();
     var rect = this.node.getBoundingClientRect();
-    var box = boxSizing(this.node);
+    var box = this.boxSizing;
     var top = box.paddingTop;
     var left = box.paddingLeft;
     var right = box.paddingRight;
