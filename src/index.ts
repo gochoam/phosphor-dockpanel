@@ -437,7 +437,7 @@ class DockPanel extends BoxPanel {
     this._items.push({ tab: tab, widget: widget, panel: item.panel });
 
     // Add the widget to the tab panel.
-    var i = item.panel.childIndex(item.widget);
+    var i = item.panel.stack.childIndex(item.widget);
     item.panel.stack.addChild(widget);
     item.panel.tabs.insertTab(i + (+after), tab);
   }
