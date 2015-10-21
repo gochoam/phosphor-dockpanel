@@ -577,7 +577,7 @@ class DockPanel extends BoxPanel {
     var mode = SplitMode.Invalid;
     var hitPanel = dragData.lastHitPanel;
     if (hitPanel && (hitPanel !== ownPanel || ownCount !== 0)) {
-      mode = hitPanel.splitModeAt(event.clientX, event.clientY);
+      mode = SplitMode.Invalid; // hitPanel.splitModeAt(event.clientX, event.clientY);
     }
 
     // If the mouse was not released over a panel, or if the hit panel
@@ -887,6 +887,7 @@ class DockPanel extends BoxPanel {
   private _ignoreRemoved = false;
   private _items: IDockItem[] = [];
   private _dragData: IDragData = null;
+  private _overlay: DockPanelOverlay;
 }
 
 
@@ -998,29 +999,92 @@ function iterSplitPanels<T>(root: DockSplitPanel, cb: (panel: DockSplitPanel) =>
 
 
 /**
- * Create the overlay node for a dock tab panel.
- */
-function createOverlay(): HTMLElement {
-  var overlay = document.createElement('div');
-  overlay.className = OVERLAY_CLASS;
-  overlay.style.display = 'none';
-  return overlay;
-}
-
-
-/**
  * The split modes used to indicate a dock panel split direction.
  */
 enum SplitMode { Top, Left, Right, Bottom, Invalid }
+
+  // /**
+  //  * Compute the split mode for the given client position.
+  //  */
+  // splitModeAt(clientX: number, clientY: number): SplitMode {
+  //   var rect = this.stack.node.getBoundingClientRect();
+  //   var fracX = (clientX - rect.left) / rect.width;
+  //   var fracY = (clientY - rect.top) / rect.height;
+  //   if (fracX < 0.0 || fracX > 1.0 || fracY < 0.0 || fracY > 1.0) {
+  //     return SplitMode.Invalid;
+  //   }
+  //   var mode: SplitMode;
+  //   var normX = fracX > 0.5 ? 1 - fracX : fracX;
+  //   var normY = fracY > 0.5 ? 1 - fracY : fracY;
+  //   if (normX < normY) {
+  //     mode = fracX <= 0.5 ? SplitMode.Left : SplitMode.Right;
+  //   } else {
+  //     mode = fracY <= 0.5 ? SplitMode.Top : SplitMode.Bottom;
+  //   }
+  //   return mode;
+  // }
+
+
+/**
+ *
+ */
+class DockPanelOverlay extends Widget {
+  /**
+   *
+   */
+  constructor() {
+    super();
+    this.addClass('p-DockPanelOverlay');
+  }
+
+  /**
+   *
+   */
+  show(left: number, top: number, width: number, height: number): void {
+    this._clearTimer();
+    var style = this.node.style;
+    style.opacity = '1';
+    style.top = top + 'px';
+    style.left = left + 'px';
+    style.width = width + 'px';
+    style.height = height + 'px';
+    this.hidden = false;
+  }
+
+  /**
+   *
+   */
+  hide(): void {
+    if (this._timer || this.hidden) {
+      return;
+    }
+    this.node.style.opacity = '0';
+    this._timer = setTimeout(() => {
+      this.hidden = true;
+      this._timer = 0;
+    }, 150);
+  }
+
+  /**
+   *
+   */
+  private _clearTimer(): void {
+    if (this._timer) {
+      clearTimeout(this._timer);
+      this._timer = 0;
+    }
+  }
+
+  private _timer = 0;
+}
 
 
 /**
  * A tabbed panel used by a DockPanel.
  *
  * This tab panel acts as a simple container for a tab bar and stacked
- * panel, plus a bit of logic to manage the docking overlay. The dock
- * panel manages the tab bar and stacked panel directly, as there is
- * not always a 1:1 association between a tab and panel.
+ * panel. The dock panel manages the tab bar and stacked panel directly,
+ * as there is not always a 1:1 association between a tab and panel.
  */
 class DockTabPanel extends BoxPanel {
   /**
@@ -1038,19 +1102,14 @@ class DockTabPanel extends BoxPanel {
 
     this.addChild(this._tabs);
     this.addChild(this._stack);
-
-    this._overlay = createOverlay();
-    this.node.appendChild(this._overlay);
   }
 
   /**
    * Dispose of the resources held by the widget.
    */
   dispose(): void {
-    this._clearOverlayTimer();
     this._tabs = null;
     this._stack = null;
-    this._overlay = null;
     super.dispose();
   }
 
@@ -1068,106 +1127,6 @@ class DockTabPanel extends BoxPanel {
     return this._stack;
   }
 
-  /**
-   * Compute the split mode for the given client position.
-   */
-  splitModeAt(clientX: number, clientY: number): SplitMode {
-    var rect = this.stack.node.getBoundingClientRect();
-    var fracX = (clientX - rect.left) / rect.width;
-    var fracY = (clientY - rect.top) / rect.height;
-    if (fracX < 0.0 || fracX > 1.0 || fracY < 0.0 || fracY > 1.0) {
-      return SplitMode.Invalid;
-    }
-    var mode: SplitMode;
-    var normX = fracX > 0.5 ? 1 - fracX : fracX;
-    var normY = fracY > 0.5 ? 1 - fracY : fracY;
-    if (normX < normY) {
-      mode = fracX <= 0.5 ? SplitMode.Left : SplitMode.Right;
-    } else {
-      mode = fracY <= 0.5 ? SplitMode.Top : SplitMode.Bottom;
-    }
-    return mode;
-  }
-
-  /**
-   * Show the dock overlay for the given client position.
-   *
-   * If the overlay is already visible, it will be adjusted.
-   */
-  showOverlay(clientX: number, clientY: number): void {
-    this._clearOverlayTimer();
-    var rect = this.node.getBoundingClientRect();
-    var box = this.boxSizing;
-    var top = box.paddingTop;
-    var left = box.paddingLeft;
-    var right = box.paddingRight;
-    var bottom = box.paddingBottom;
-    switch (this.splitModeAt(clientX, clientY)) {
-    case SplitMode.Left:
-      right = rect.width / 2;
-      break;
-    case SplitMode.Right:
-      left = rect.width / 2;
-      break;
-    case SplitMode.Top:
-      bottom = rect.height / 2;
-      break;
-    case SplitMode.Bottom:
-      top = rect.height / 2;
-      break;
-    }
-    // The first time the overlay is made visible, it is positioned at
-    // the cursor with zero size before being displayed. This allows
-    // for a nice transition to the normally computed size. Since the
-    // elements starts with display: none, a restyle must be forced.
-    var style = this._overlay.style;
-    if (this._overlayHidden) {
-      this._overlayHidden = false;
-      style.top = clientY - rect.top + 'px';
-      style.left = clientX - rect.left + 'px';
-      style.right = rect.right - clientX + 'px';
-      style.bottom = rect.bottom - clientY + 'px';
-      style.display = '';
-      this._overlay.offsetWidth; // force layout
-    }
-    style.opacity = '1';
-    style.top = top + 'px';
-    style.left = left + 'px';
-    style.right = right + 'px';
-    style.bottom = bottom + 'px';
-  }
-
-  /**
-   * Hide the dock overlay.
-   *
-   * If the overlay is already hidden, this is a no-op.
-   */
-  hideOverlay(): void {
-    if (this._overlayHidden) {
-      return;
-    }
-    this._clearOverlayTimer();
-    this._overlayHidden = true;
-    this._overlay.style.opacity = '0';
-    this._overlayTimer = setTimeout(() => {
-      this._overlayTimer = 0;
-      this._overlay.style.display = 'none';
-    }, 150);
-  }
-
-  /**
-   * Clear the overlay timer.
-   */
-  private _clearOverlayTimer(): void {
-    if (this._overlayTimer) {
-      clearTimeout(this._overlayTimer);
-      this._overlayTimer = 0;
-    }
-  }
-
-  private _overlayTimer = 0;
-  private _overlayHidden = true;
-  private _overlay: HTMLElement;
   private _tabs = new TabBar();
   private _stack = new StackedPanel();
 }
