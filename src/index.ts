@@ -23,6 +23,10 @@ import {
 } from 'phosphor-domutil';
 
 import {
+  NodeWrapper
+} from 'phosphor-nodewrapper';
+
+import {
   Property
 } from 'phosphor-properties';
 
@@ -199,6 +203,7 @@ class DockPanel extends BoxPanel {
   constructor() {
     super();
     this.addClass(DockPanel.p_DockPanel);
+    this.node.appendChild(this._overlay.node);
     this._root = this._createSplitPanel(Orientation.Horizontal);
     this.addChild(this._root);
   }
@@ -359,7 +364,11 @@ class DockPanel extends BoxPanel {
 
     // Ensure a proper root and add the new tab panel.
     this._ensureRoot(orientation);
+
+    var sizes = this._root.sizes();
+    if (after) sizes.push(0.5); else sizes.unshift(0.5);
     this._root.insertChild(after ? this._root.childCount : 0, panel);
+    this._root.setSizes(sizes);
   }
 
   /**
@@ -421,7 +430,7 @@ class DockPanel extends BoxPanel {
     this._items.push({ tab: tab, widget: widget, panel: item.panel });
 
     // Add the widget to the tab panel.
-    var i = item.panel.stack.childIndex(item.widget);
+    var i = item.panel.tabs.tabIndex(item.tab);
     item.panel.stack.addChild(widget);
     item.panel.tabs.insertTab(i + (+after), tab);
   }
@@ -439,67 +448,111 @@ class DockPanel extends BoxPanel {
       return;
     }
 
-    // Hit test the panels using the current mouse position.
     var clientX = event.clientX;
     var clientY = event.clientY;
-    var hitPanel = iterTabPanels(this._root, panel => {
-      return hitTest(panel.node, clientX, clientY) ? panel : void 0;
-    });
 
-    // If the last hit panel is not this hit panel, clear the overlay.
-    if (dragData.lastHitPanel && dragData.lastHitPanel !== hitPanel) {
-      dragData.lastHitPanel.hideOverlay();
-    }
+    var tabStyle = dragData.item.tab.node.style;
 
-    // Clear the reference to the hit panel. It will be updated again
-    // if the mouse is over a panel, but not over the panel's tab bar.
-    dragData.lastHitPanel = null;
-
-    // If the mouse is not over a tab panel, simply update the tab.
-    var item = dragData.item;
-    var tabStyle = item.tab.node.style;
-    if (!hitPanel) {
-      tabStyle.left = clientX + 'px';
-      tabStyle.top = clientY + 'px';
-      return;
-    }
-
-    // Handle the case where the mouse is not over a tab bar. This
-    // saves a reference to the hit panel so that its overlay can be
-    // hidden once the mouse leaves the panel, and shows the overlay
-    // provided that the split target is not the current widget.
-    if (!hitTest(hitPanel.tabs.node, clientX, clientY)) {
-      dragData.lastHitPanel = hitPanel;
-      if (hitPanel !== item.panel || hitPanel.tabs.tabCount > 0) {
-        hitPanel.showOverlay(clientX, clientY);
+    var area = getBorderArea(this, clientX, clientY);
+    if (area !== BorderArea.Invalid) {
+      var box = this.boxSizing;
+      var rect = this.node.getBoundingClientRect();
+      var top: number;
+      var left: number;
+      var right: number;
+      var bottom: number;
+      switch (area) {
+      case BorderArea.Top:
+        top = box.paddingTop;
+        left = box.paddingLeft;
+        right = box.paddingRight;
+        bottom = (rect.height - box.verticalSum) * 2 / 3;
+        break;
+      case BorderArea.Left:
+        top = box.paddingTop;
+        left = box.paddingLeft;
+        right = (rect.width - box.horizontalSum) * 2 / 3;
+        bottom = box.paddingBottom;
+        break;
+      case BorderArea.Right:
+        top = box.paddingTop;
+        left = (rect.width - box.horizontalSum) * 2 / 3;
+        right = box.paddingRight;
+        bottom = box.paddingBottom;
+        break;
+      case BorderArea.Bottom:
+        top = (rect.height - box.verticalSum) * 2 / 3;
+        left = box.paddingLeft;
+        right = box.paddingRight;
+        bottom = box.paddingBottom;
+        break;
       }
+
+      tabStyle.left = clientX + 'px';
+      tabStyle.top = clientY + 'px';
+      this._overlay.show(left, top, right, bottom);
+
+      return;
+    }
+
+
+    var { panel, mode } = getSplitMode(this._root, clientX, clientY);
+
+    if (mode === SplitMode.Invalid) {
+      this._overlay.hide();
       tabStyle.left = clientX + 'px';
       tabStyle.top = clientY + 'px';
       return;
     }
 
-    // Otherwise the mouse is positioned over a tab bar. Hide the
-    // overlay before attaching the tab to the new tab bar.
-    hitPanel.hideOverlay();
+    var box = this.boxSizing;
+    var thisRect = this.node.getBoundingClientRect();
+    var panelRect = panel.node.getBoundingClientRect();
 
-    // If the hit panel is not the current owner, the current hit
-    // panel and tab are saved so that they can be restored later.
-    if (hitPanel !== item.panel) {
-      dragData.tempPanel = hitPanel;
-      dragData.tempTab = hitPanel.tabs.selectedTab;
+    var top: number;
+    var left: number;
+    var right: number;
+    var bottom: number;
+    switch (mode) {
+    case SplitMode.Top:
+      top = panelRect.top - thisRect.top - box.borderTop;
+      left = panelRect.left - thisRect.left - box.borderLeft;
+      right = thisRect.right - panelRect.right;
+      bottom = thisRect.bottom - panelRect.bottom + panelRect.height / 2;
+      this._overlay.show(left, top, right, bottom)
+      break;
+    case SplitMode.Left:
+      top = panelRect.top - thisRect.top - box.borderTop;
+      left = panelRect.left - thisRect.left - box.borderLeft;
+      right = thisRect.right - panelRect.right + panelRect.width / 2;
+      bottom = thisRect.bottom - panelRect.bottom;
+      break;
+    case SplitMode.Right:
+      top = panelRect.top - thisRect.top - box.borderTop;
+      left = panelRect.left - thisRect.left - box.borderLeft + panelRect.width / 2;
+      right = thisRect.right - panelRect.right;
+      bottom = thisRect.bottom - panelRect.bottom;
+      break;
+    case SplitMode.Bottom:
+      top = panelRect.top - thisRect.top - box.borderTop + panelRect.height / 2;
+      left = panelRect.left - thisRect.left - box.borderLeft;
+      right = thisRect.right - panelRect.right;
+      bottom = thisRect.bottom - panelRect.bottom;
+      break;
+    case SplitMode.Center:
+      top = panelRect.top - thisRect.top - box.borderTop;
+      left = panelRect.left - thisRect.left - box.borderLeft;
+      right = thisRect.right - panelRect.right;
+      bottom = thisRect.bottom - panelRect.bottom;
+      break;
     }
 
-    // Reset the tab style before attaching the tab to the tab bar.
-    item.tab.removeClass(DockPanel.p_mod_docking);
-    tabStyle.top = '';
-    tabStyle.left = '';
+    tabStyle.left = clientX + 'px';
+    tabStyle.top = clientY + 'px';
 
-    // Attach the tab to the hit tab bar.
-    hitPanel.tabs.attachTab(item.tab, clientX);
-
-    // The tab bar takes over movement of the tab. The dock panel still
-    // listens for the mouseup event in order to complete the move.
-    document.removeEventListener('mousemove', this, true);
+    if (mode !== SplitMode.Invalid) {
+      this._overlay.show(left, top, right, bottom);
+    }
   }
 
   /**
@@ -508,14 +561,19 @@ class DockPanel extends BoxPanel {
    * This is triggered on the document during a tab move operation.
    */
   private _evtMouseUp(event: MouseEvent): void {
+    //
     if (event.button !== 0) {
       return;
     }
+
+    //
     event.preventDefault();
     event.stopPropagation();
     document.removeEventListener('mouseup', this, true);
     document.removeEventListener('mousemove', this, true);
     document.removeEventListener('contextmenu', this, true);
+
+    //
     var dragData = this._dragData;
     if (!dragData) {
       return;
@@ -524,9 +582,7 @@ class DockPanel extends BoxPanel {
 
     // Restore the application cursor and hide the overlay.
     dragData.cursorGrab.dispose();
-    if (dragData.lastHitPanel) {
-      dragData.lastHitPanel.hideOverlay();
-    }
+    this._overlay.hide();
 
     // Fetch common variables.
     var item = dragData.item;
@@ -535,45 +591,47 @@ class DockPanel extends BoxPanel {
     var ownCount = ownBar.tabCount;
     var itemTab = item.tab;
 
-    // If the tab was being temporarily borrowed by another panel,
-    // make that relationship permanent by moving the dock widget.
-    // If the original owner panel becomes empty, it is removed.
-    // Otherwise, its current index is updated to the next widget.
-    // The ignoreRemoved flag is set during the widget swap since
-    // the widget is not actually being removed from the panel.
-    if (dragData.tempPanel) {
-      this._ignoreRemoved = true;
-      item.panel = dragData.tempPanel;
-      item.panel.stack.addChild(item.widget);
-      item.panel.stack.currentWidget = item.widget;
-      this._ignoreRemoved = false;
-      if (ownPanel.stack.childCount === 0) {
-        this._removePanel(ownPanel);
-      } else {
-        var i = ownBar.tabIndex(dragData.prevTab);
-        if (i === -1) i = Math.min(dragData.index, ownCount - 1);
-        ownBar.selectedTab = ownBar.tabAt(i);
+    var clientX = event.clientX;
+    var clientY = event.clientY;
+
+    var tabStyle = dragData.item.tab.node.style;
+
+    var area = getBorderArea(this, clientX, clientY);
+    if (area !== BorderArea.Invalid) {
+      document.body.removeChild(itemTab.node);
+      itemTab.removeClass(DockPanel.p_mod_docking);
+      tabStyle.top = '';
+      tabStyle.left = '';
+      switch (area) {
+      case BorderArea.Top:
+        this._addPanel(item.widget, Orientation.Vertical, false);
+        break;
+      case BorderArea.Left:
+        this._addPanel(item.widget, Orientation.Horizontal, false);
+        break;
+      case BorderArea.Right:
+        this._addPanel(item.widget, Orientation.Horizontal, true);
+        break;
+      case BorderArea.Bottom:
+        this._addPanel(item.widget, Orientation.Vertical, true);
+        break;
       }
+
+      var i = ownBar.tabIndex(dragData.prevTab);
+      if (i === -1) i = Math.min(dragData.index, ownCount - 1);
+      ownBar.selectedTab = ownBar.tabAt(i);
+
       return;
     }
 
-    // Snap the split mode before modifying the DOM with the tab insert.
-    var mode = SplitMode.Invalid;
-    var hitPanel = dragData.lastHitPanel;
-    if (hitPanel && (hitPanel !== ownPanel || ownCount !== 0)) {
-      mode = SplitMode.Invalid; // hitPanel.splitModeAt(event.clientX, event.clientY);
-    }
+    var { panel, mode } = getSplitMode(this._root, clientX, clientY);
 
-    // If the mouse was not released over a panel, or if the hit panel
-    // is the empty owner panel, restore the tab to its position.
-    var tabStyle = itemTab.node.style;
+    // If the mouse was not released over a panel, restore the tab.
     if (mode === SplitMode.Invalid) {
-      if (ownBar.selectedTab !== itemTab) {
-        itemTab.removeClass(DockPanel.p_mod_docking);
-        tabStyle.top = '';
-        tabStyle.left = '';
-        ownBar.insertTab(dragData.index, itemTab);
-      }
+      itemTab.removeClass(DockPanel.p_mod_docking);
+      tabStyle.top = '';
+      tabStyle.left = '';
+      ownBar.insertTab(dragData.index, itemTab);
       return;
     }
 
@@ -583,11 +641,41 @@ class DockPanel extends BoxPanel {
     tabStyle.top = '';
     tabStyle.left = '';
 
+    //
+    if (mode === SplitMode.Center && panel === ownPanel) {
+      ownBar.insertTab(dragData.index, itemTab);
+      return;
+    }
+
+    //
+    if (panel === ownPanel && ownCount === 0) {
+      ownBar.insertTab(dragData.index, itemTab);
+      return;
+    }
+
     // Split the target panel with the dock widget.
-    var after = mode === SplitMode.Right || mode === SplitMode.Bottom;
-    var horiz = mode === SplitMode.Left || mode === SplitMode.Right;
-    var orientation = horiz ? Orientation.Horizontal : Orientation.Vertical;
-    this._splitPanel(hitPanel, item.widget, orientation, after);
+    switch (mode) {
+    case SplitMode.Top:
+      this._splitPanel(panel, item.widget, Orientation.Vertical, false);
+      break;
+    case SplitMode.Left:
+      this._splitPanel(panel, item.widget, Orientation.Horizontal, false);
+      break;
+    case SplitMode.Right:
+      this._splitPanel(panel, item.widget, Orientation.Horizontal, true);
+      break;
+    case SplitMode.Bottom:
+      this._splitPanel(panel, item.widget, Orientation.Vertical, true);
+      break;
+    case SplitMode.Center:
+      var ref = panel.tabs.tabAt(panel.tabs.tabCount - 1);
+      var other = this._findItemByTab(ref);
+      this._tabifyPanel(other, item.widget, true);
+      panel.tabs.selectedTab = itemTab;
+      break;
+    }
+
+    //
     var i = ownBar.tabIndex(dragData.prevTab);
     if (i === -1) i = Math.min(dragData.index, ownCount - 1);
     ownBar.selectedTab = ownBar.tabAt(i);
@@ -718,28 +806,28 @@ class DockPanel extends BoxPanel {
     dragData.cursorGrab.dispose();
 
     // Hide the overlay for the last hit panel.
-    if (dragData.lastHitPanel) {
-      dragData.lastHitPanel.hideOverlay();
-    }
+    // if (dragData.lastHitPanel) {
+    //   dragData.lastHitPanel.hideOverlay();
+    // }
 
     // If the tab is borrowed by another tab bar, remove it from
     // that tab bar and restore that tab bar's previous tab.
-    if (dragData.tempPanel) {
-      var tabs = dragData.tempPanel.tabs;
-      tabs.removeTab(tabs.selectedTab);
-      tabs.selectedTab = dragData.tempTab;
-    }
+    // if (dragData.tempPanel) {
+    //   var tabs = dragData.tempPanel.tabs;
+    //   tabs.removeTab(tabs.selectedTab);
+    //   tabs.selectedTab = dragData.tempTab;
+    // }
 
     // Restore the tab to its original location in its owner panel.
-    var item = dragData.item;
-    var ownBar = item.panel.tabs;
-    if (ownBar.selectedTab !== item.tab) {
-      var tabStyle = item.tab.node.style;
-      item.tab.removeClass(DockPanel.p_mod_docking);
-      tabStyle.top = '';
-      tabStyle.left = '';
-      ownBar.insertTab(dragData.index, item.tab);
-    }
+    // var item = dragData.item;
+    // var ownBar = item.panel.tabs;
+    // if (ownBar.selectedTab !== item.tab) {
+    //   var tabStyle = item.tab.node.style;
+    //   item.tab.removeClass(DockPanel.p_mod_docking);
+    //   tabStyle.top = '';
+    //   tabStyle.left = '';
+    //   ownBar.insertTab(dragData.index, item.tab);
+    // }
   }
 
   /**
@@ -801,10 +889,10 @@ class DockPanel extends BoxPanel {
         item: item,
         index: args.index,
         prevTab: sender.previousTab,
-        lastHitPanel: null,
+        // lastHitPanel: null,
         cursorGrab: null,
-        tempPanel: null,
-        tempTab: null,
+        // tempPanel: null,
+        // tempTab: null,
       };
     }
 
@@ -824,13 +912,14 @@ class DockPanel extends BoxPanel {
       sender.selectedTab = null;
       sender.removeTabAt(args.index);
     } else {
-      sender.removeTabAt(args.index);
-      sender.selectedTab = dragData.tempTab;
+      throw new Error('');
+      // sender.removeTabAt(args.index);
+      // sender.selectedTab = dragData.tempTab;
     }
 
-    // Clear the temp panel and tab
-    dragData.tempPanel = null;
-    dragData.tempTab = null;
+    // // Clear the temp panel and tab
+    // dragData.tempPanel = null;
+    // dragData.tempTab = null;
 
     // Setup the style and position for the floating tab.
     var style = args.tab.node.style;
@@ -871,7 +960,7 @@ class DockPanel extends BoxPanel {
   private _ignoreRemoved = false;
   private _items: IDockItem[] = [];
   private _dragData: IDragData = null;
-  private _overlay: DockPanelOverlay;
+  private _overlay = new DockPanelOverlay();
 }
 
 
@@ -919,21 +1008,6 @@ interface IDragData {
    * The cursor override disposable.
    */
   cursorGrab: IDisposable;
-
-  /**
-   * The most recent tab panel which was moused over.
-   */
-  lastHitPanel: DockTabPanel;
-
-  /**
-   * The tab panel which is temporarily borrowing the tab.
-   */
-  tempPanel: DockTabPanel;
-
-  /**
-   * The selected tab of the temp panel before borrowing.
-   */
-  tempTab: Tab;
 }
 
 
@@ -985,60 +1059,142 @@ function iterSplitPanels<T>(root: DockSplitPanel, cb: (panel: DockSplitPanel) =>
 /**
  * The split modes used to indicate a dock panel split direction.
  */
-enum SplitMode { Top, Left, Right, Bottom, Invalid }
+enum SplitMode { Top, Left, Right, Bottom, Center, Invalid }
+
+/**
+ *
+ */
+enum BorderArea { Top, Left, Right, Bottom, Invalid }
 
 
 /**
  *
  */
-class DockPanelOverlay extends Widget {
+function getBorderArea(root: DockPanel, clientX: number, clientY: number): BorderArea {
+  var r = root.node.getBoundingClientRect();
+  if (clientX >= r.left && clientX < r.left + 40) {
+    if (clientY - r.top < clientX - r.left) {
+      return BorderArea.Top;
+    }
+    if (r.bottom - clientY < clientX - r.left) {
+      return BorderArea.Bottom;
+    }
+    return BorderArea.Left;
+  }
+  if (clientX < r.right && clientX >= r.right - 40) {
+    if (clientY - r.top < r.right - clientX) {
+      return BorderArea.Top;
+    }
+    if (r.bottom - clientY < r.right - clientX) {
+      return BorderArea.Bottom;
+    }
+    return BorderArea.Right;
+  }
+  if (clientX >= r.left && clientX < r.right) {
+    if (clientY >= r.top && clientY < r.top + 40) {
+      return BorderArea.Top;
+    }
+    if (clientY < r.bottom && clientY >= r.bottom - 40) {
+      return BorderArea.Bottom;
+    }
+  }
+  return BorderArea.Invalid;
+}
+
+
+/**
+ *
+ */
+function getSplitMode(root: DockSplitPanel, clientX: number, clientY: number): { panel: DockTabPanel, mode: SplitMode } {
+  for (var i = 0, n = root.childCount; i < n; ++i) {
+    var child = root.childAt(i);
+    if (child instanceof DockTabPanel) {
+      var mode = splitModeAt(child, clientX, clientY);
+      if (mode !== SplitMode.Invalid) {
+        return { panel: child, mode: mode };
+      }
+    } else { // a DockSplitPanel
+      var result = getSplitMode(child as DockSplitPanel, clientX, clientY);
+      if (result.mode !== SplitMode.Invalid) {
+        return result;
+      }
+    }
+  }
+  return { panel: null, mode: SplitMode.Invalid };
+}
+
+
+/**
+ *
+ */
+function splitModeAt(panel: DockTabPanel, clientX: number, clientY: number): SplitMode {
+  var rect = panel.node.getBoundingClientRect();
+  var fracX = (clientX - rect.left) / rect.width;
+  var fracY = (clientY - rect.top) / rect.height;
+  if (fracX < 0.0 || fracX > 1.0 || fracY < 0.0 || fracY > 1.0) {
+    return SplitMode.Invalid;
+  }
+  var mode: SplitMode;
+  if (fracX < 1 / 3) {
+    if (fracY < 1 / 3) {
+      mode = fracY < fracX ? SplitMode.Top : SplitMode.Left;
+    } else if (fracY < 2 / 3) {
+      mode = SplitMode.Left;
+    } else {
+      mode = fracY < (1 - fracX) ? SplitMode.Bottom: SplitMode.Left;
+    }
+  } else if (fracX < 2 / 3) {
+    if (fracY < 1 / 3) {
+      mode = SplitMode.Top;
+    } else if (fracY < 2 / 3) {
+      mode = SplitMode.Center;
+    } else {
+      mode = SplitMode.Bottom;
+    }
+  } else {
+    if (fracY < 1 / 3) {
+      mode = fracY < (1 - fracX) ? SplitMode.Top : SplitMode.Right;
+    } else if (fracY < 2 / 3) {
+      mode = SplitMode.Right;
+    } else {
+      mode = (1 - fracY) < (1 - fracX) ? SplitMode.Bottom: SplitMode.Right;
+    }
+  }
+  return mode;
+}
+
+
+/**
+ *
+ */
+class DockPanelOverlay extends NodeWrapper {
   /**
    *
    */
   constructor() {
     super();
     this.addClass('p-DockPanelOverlay');
+    this.addClass('p-mod-hidden');
   }
 
   /**
    *
    */
-  show(left: number, top: number, width: number, height: number): void {
-    this._clearTimer();
+  show(left: number, top: number, right: number, bottom: number): void {
     var style = this.node.style;
-    style.opacity = '1';
     style.top = top + 'px';
     style.left = left + 'px';
-    style.width = width + 'px';
-    style.height = height + 'px';
-    this.hidden = false;
+    style.right = right + 'px';
+    style.bottom = bottom + 'px';
+    this.removeClass('p-mod-hidden');
   }
 
   /**
    *
    */
   hide(): void {
-    if (this._timer || this.hidden) {
-      return;
-    }
-    this.node.style.opacity = '0';
-    this._timer = setTimeout(() => {
-      this.hidden = true;
-      this._timer = 0;
-    }, 150);
+    this.addClass('p-mod-hidden');
   }
-
-  /**
-   *
-   */
-  private _clearTimer(): void {
-    if (this._timer) {
-      clearTimeout(this._timer);
-      this._timer = 0;
-    }
-  }
-
-  private _timer = 0;
 }
 
 

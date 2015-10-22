@@ -5,15 +5,24 @@
 |
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
-.p-DockTabPanel-overlay {
+.p-DockPanel {
+  z-index: 0;
+}
+
+
+.p-DockPanelOverlay {
   box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
-  transition: all 150ms ease;
+  z-index: 10000;
+}
+
+
+.p-DockPanelOverlay.p-mod-hidden {
+  display: none;
 }
 
 
