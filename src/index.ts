@@ -46,32 +46,6 @@ import './index.css';
 
 
 /**
- * `p-DockPanel`: the class name added to DockPanel instances.
- */
-var DOCK_PANEL_CLASS = 'p-DockPanel';
-
-/**
- * `p-DockSplitPanel`: the class name added to DockSplitPanel instances.
- */
-var DOCK_SPLIT_PANEL_CLASS = 'p-DockSplitPanel';
-
-/**
- * `p-DockTabPanel`: the class name added to DockTabPanel instances.
- */
-var DOCK_TAB_PANEL_CLASS = 'p-DockTabPanel';
-
-/**
- * `p-DockTabPanel-overlay`: the class name added to a DockTabPanel overlay.
- */
-var OVERLAY_CLASS = 'p-DockTabPanel-overlay';
-
-/**
- * The class name added to a tab which is being docked.
- */
-var DOCKING_CLASS = 'p-mod-docking';
-
-
-/**
  * An enum of docking modes for a dock panel.
  */
 export
@@ -119,6 +93,16 @@ enum DockMode {
  */
 export
 class DockPanel extends BoxPanel {
+  /**
+   * The class name added to DockPanel instances.
+   */
+  static p_DockPanel = 'p-DockPanel';
+
+  /**
+   * The class name added to a tab which is being docked.
+   */
+  static p_mod_docking = 'p-mod-docking';
+
   /**
    * A convenience alias of the `SplitTop` [[DockMode]].
    */
@@ -214,7 +198,7 @@ class DockPanel extends BoxPanel {
    */
   constructor() {
     super();
-    this.addClass(DOCK_PANEL_CLASS);
+    this.addClass(DockPanel.p_DockPanel);
     this._root = this._createSplitPanel(Orientation.Horizontal);
     this.addChild(this._root);
   }
@@ -437,7 +421,7 @@ class DockPanel extends BoxPanel {
     this._items.push({ tab: tab, widget: widget, panel: item.panel });
 
     // Add the widget to the tab panel.
-    var i = item.panel.childIndex(item.widget);
+    var i = item.panel.stack.childIndex(item.widget);
     item.panel.stack.addChild(widget);
     item.panel.tabs.insertTab(i + (+after), tab);
   }
@@ -506,7 +490,7 @@ class DockPanel extends BoxPanel {
     }
 
     // Reset the tab style before attaching the tab to the tab bar.
-    item.tab.removeClass(DOCKING_CLASS);
+    item.tab.removeClass(DockPanel.p_mod_docking);
     tabStyle.top = '';
     tabStyle.left = '';
 
@@ -585,7 +569,7 @@ class DockPanel extends BoxPanel {
     var tabStyle = itemTab.node.style;
     if (mode === SplitMode.Invalid) {
       if (ownBar.selectedTab !== itemTab) {
-        itemTab.removeClass(DOCKING_CLASS);
+        itemTab.removeClass(DockPanel.p_mod_docking);
         tabStyle.top = '';
         tabStyle.left = '';
         ownBar.insertTab(dragData.index, itemTab);
@@ -595,7 +579,7 @@ class DockPanel extends BoxPanel {
 
     // Remove the tab from the document body and reset its style.
     document.body.removeChild(itemTab.node);
-    itemTab.removeClass(DOCKING_CLASS);
+    itemTab.removeClass(DockPanel.p_mod_docking);
     tabStyle.top = '';
     tabStyle.left = '';
 
@@ -751,7 +735,7 @@ class DockPanel extends BoxPanel {
     var ownBar = item.panel.tabs;
     if (ownBar.selectedTab !== item.tab) {
       var tabStyle = item.tab.node.style;
-      item.tab.removeClass(DOCKING_CLASS);
+      item.tab.removeClass(DockPanel.p_mod_docking);
       tabStyle.top = '';
       tabStyle.left = '';
       ownBar.insertTab(dragData.index, item.tab);
@@ -853,7 +837,7 @@ class DockPanel extends BoxPanel {
     style.zIndex = '';
     style.top = args.clientY + 'px';
     style.left = args.clientX + 'px';
-    args.tab.addClass(DOCKING_CLASS);
+    args.tab.addClass(DockPanel.p_mod_docking);
 
     // Add the tab to the document body.
     document.body.appendChild(args.tab.node);
@@ -1003,27 +987,6 @@ function iterSplitPanels<T>(root: DockSplitPanel, cb: (panel: DockSplitPanel) =>
  */
 enum SplitMode { Top, Left, Right, Bottom, Invalid }
 
-  // /**
-  //  * Compute the split mode for the given client position.
-  //  */
-  // splitModeAt(clientX: number, clientY: number): SplitMode {
-  //   var rect = this.stack.node.getBoundingClientRect();
-  //   var fracX = (clientX - rect.left) / rect.width;
-  //   var fracY = (clientY - rect.top) / rect.height;
-  //   if (fracX < 0.0 || fracX > 1.0 || fracY < 0.0 || fracY > 1.0) {
-  //     return SplitMode.Invalid;
-  //   }
-  //   var mode: SplitMode;
-  //   var normX = fracX > 0.5 ? 1 - fracX : fracX;
-  //   var normY = fracY > 0.5 ? 1 - fracY : fracY;
-  //   if (normX < normY) {
-  //     mode = fracX <= 0.5 ? SplitMode.Left : SplitMode.Right;
-  //   } else {
-  //     mode = fracY <= 0.5 ? SplitMode.Top : SplitMode.Bottom;
-  //   }
-  //   return mode;
-  // }
-
 
 /**
  *
@@ -1088,11 +1051,21 @@ class DockPanelOverlay extends Widget {
  */
 class DockTabPanel extends BoxPanel {
   /**
+   * The class name added to DockTabPanel instances.
+   */
+  static p_DockTabPanel = 'p-DockTabPanel';
+
+  /**
+   * `p-DockTabPanel-overlay`: the class name added to a DockTabPanel overlay.
+   */
+  static p_DockTabPanel_overlay = 'p-DockTabPanel-overlay';
+
+  /**
    * Construct a new dock tab panel.
    */
   constructor() {
     super();
-    this.addClass(DOCK_TAB_PANEL_CLASS);
+    this.addClass(DockTabPanel.p_DockTabPanel);
 
     this.direction = BoxPanel.TopToBottom;
     this.spacing = 0;
@@ -1140,10 +1113,15 @@ class DockTabPanel extends BoxPanel {
  */
 class DockSplitPanel extends SplitPanel {
   /**
+   * The class name added to DockSplitPanel instances.
+   */
+  static p_DockSplitPanel = 'p-DockSplitPanel';
+
+  /**
    * Construct a new dock split panel.
    */
   constructor() {
     super();
-    this.addClass(DOCK_SPLIT_PANEL_CLASS);
+    this.addClass(DockSplitPanel.p_DockSplitPanel);
   }
 }

@@ -17,6 +17,11 @@
 }
 
 
+.p-DockTabPanel > .p-StackedPanel {
+  z-index: 0;
+}
+
+
 .p-Tab.p-mod-docking {
   position: absolute;
 }
