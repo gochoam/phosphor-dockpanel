@@ -10,24 +10,24 @@
 }
 
 
+.p-DockPanel > .p-DockSplitPanel {
+  z-index: 0;
+}
+
+
 .p-DockPanelOverlay {
   box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10000;
+  width: 0;
+  height: 0;
+  z-index: 1;
 }
 
 
 .p-DockPanelOverlay.p-mod-hidden {
   display: none;
-}
-
-
-.p-DockTabPanel > .p-StackedPanel {
-  z-index: 0;
 }
 
 
