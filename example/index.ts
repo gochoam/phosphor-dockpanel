@@ -55,21 +55,22 @@ function main(): void {
   var panel = new DockPanel();
   panel.id = 'main';
 
-  panel.addWidget(r1);
+  panel.splitLeft(null, b1);
+  panel.tabify(b1, y2);
+  panel.tabify(b1, r1);
 
-  panel.addWidget(b1, DockPanel.SplitRight, r1);
-  panel.addWidget(y1, DockPanel.SplitBottom, b1);
-  panel.addWidget(g1, DockPanel.SplitLeft, y1);
+  panel.splitRight(b1, r2);
+  panel.tabify(r2, b2);
 
-  panel.addWidget(b2, DockPanel.SplitBottom);
+  panel.splitBottom(r2, r3);
+  panel.tabify(r3, y1);
 
-  panel.addWidget(y2, DockPanel.TabBefore, r1);
-  panel.addWidget(b3, DockPanel.TabBefore, y2);
-  panel.addWidget(g2, DockPanel.TabBefore, b2);
-  panel.addWidget(y3, DockPanel.TabBefore, g2);
-  panel.addWidget(g3, DockPanel.TabBefore, y3);
-  panel.addWidget(r2, DockPanel.TabBefore, b1);
-  panel.addWidget(r3, DockPanel.TabBefore, y1);
+  panel.splitLeft(y1, g1);
+
+  panel.splitBottom(null, g2);
+  panel.tabify(g2, y3);
+  panel.tabify(g2, g3);
+  panel.tabify(g2, b3);
 
   attachWidget(panel, document.body);
 
