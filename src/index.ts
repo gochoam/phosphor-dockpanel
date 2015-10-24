@@ -80,19 +80,64 @@ var DOCKING_CLASS = 'p-mod-docking';
 var HIDDEN_CLASS = 'p-mod-hidden';
 
 /**
- * The size of the border dock zone on the root panel.
+ * The class name added to top edge dock overlays.
  */
-var BORDER_SIZE = 30;
+var EDGE_TOP_CLASS = 'p-mod-edge-top';
+
+/**
+ * The class name added to left edge dock overlays.
+ */
+var EDGE_LEFT_CLASS = 'p-mod-edge-left';
+
+/**
+ * The class name added to right edge dock overlays.
+ */
+var EDGE_RIGHT_CLASS = 'p-mod-edge-right';
+
+/**
+ * The class name added to bottom edge dock overlays.
+ */
+var EDGE_BOTTOM_CLASS = 'p-mod-edge-bottom';
+
+/**
+ * The class name added to top panel dock overlays.
+ */
+var PANEL_TOP_CLASS = 'p-mod-panel-top';
+
+/**
+ * The class name added to left panel dock overlays.
+ */
+var PANEL_LEFT_CLASS = 'p-mod-panel-left';
+
+/**
+ * The class name added to right panel dock overlays.
+ */
+var PANEL_RIGHT_CLASS = 'p-mod-panel-right';
+
+/**
+ * The class name added to bottom panel dock overlays.
+ */
+var PANEL_BOTTOM_CLASS = 'p-mod-panel-bottom';
+
+/**
+ * The class named added to center panel dock overlays.
+ */
+var PANEL_CENTER_CLASS = 'p-mod-panel-center';
+
+/**
+ * The size of the edge dock zone for the root panel.
+ */
+var EDGE_SIZE = 30;
 
 
 /**
- * A widget which provides a flexible docking panel for content widgets.
+ * A widget which provides a flexible docking area for content widgets.
  *
  * #### Notes
- * Widgets should be added to a `DockPanel` using the `split<suffix>`
- * and `tabify` methods. The inherited `<prefix>Child` methods should
- * **not** be used. Widgets can be removed from a `DockPanel` by
- * setting their `parent` reference to `null`.
+ * Widgets should be added to a `DockPanel` using one of the dedicated
+ * dock methods. The inherited `<prefix>Child` methods should **not**
+ * be used. Widgets can be removed from a `DockPanel` by setting their
+ * `parent` reference to `null`.
  */
 export
 class DockPanel extends BoxPanel {
@@ -198,72 +243,72 @@ class DockPanel extends BoxPanel {
   }
 
   /**
-   * Insert a new widget above a reference widget.
+   * Insert a widget above a reference widget.
    *
    * @param ref - The reference widget. If this is null, or is not
-   *   contained in the panel, the widget will be inserted at dock
-   *   panel's top edge.
+   *   contained in the panel, the widget will be inserted at the
+   *   top edge of the dock panel.
    *
    * @param widget - The widget to insert into the dock panel.
    */
   splitTop(ref: Widget, widget: Widget): void {
-    if (ref === widget) throw new Error('invalid widget');
+    if (ref === widget) return;
     this._splitWidget(ref, widget, Orientation.Vertical, false);
   }
 
   /**
-   * Insert a new widget to the left of a reference widget.
+   * Insert a widget to the left of a reference widget.
    *
    * @param ref - The reference widget. If this is null, or is not
-   *   contained in the panel, the widget will be inserted at dock
-   *   panel's left edge.
+   *   contained in the panel, the widget will be inserted at the
+   *   left edge of the dock panel.
    *
    * @param widget - The widget to insert into the dock panel.
    */
   splitLeft(ref: Widget, widget: Widget): void {
-    if (ref === widget) throw new Error('invalid widget');
+    if (ref === widget) return;
     this._splitWidget(ref, widget, Orientation.Horizontal, false);
   }
 
   /**
-   * Insert a new widget to the right of a reference widget.
+   * Insert a widget to the right of a reference widget.
    *
    * @param ref - The reference widget. If this is null, or is not
-   *   contained in the panel, the widget will be inserted at dock
-   *   panel's right edge.
+   *   contained in the panel, the widget will be inserted at the
+   *   right edge of the dock panel.
    *
    * @param widget - The widget to insert into the dock panel.
    */
   splitRight(ref: Widget, widget: Widget): void {
-    if (ref === widget) throw new Error('invalid widget');
+    if (ref === widget) return;
     this._splitWidget(ref, widget, Orientation.Horizontal, true);
   }
 
   /**
-   * Insert a new widget below a reference widget.
+   * Insert a widget below a reference widget.
    *
    * @param ref - The reference widget. If this is null, or is not
-   *   contained in the panel, the widget will be inserted at dock
-   *   panel's bottom edge.
+   *   contained in the panel, the widget will be inserted at the
+   *   bottom edge of the dock panel.
    *
    * @param widget - The widget to insert into the dock panel.
    */
   splitBottom(ref: Widget, widget: Widget): void {
-    if (ref === widget) throw new Error('invalid widget');
+    if (ref === widget) return;
     this._splitWidget(ref, widget, Orientation.Vertical, true);
   }
 
   /**
-   * Add a new widget to the tab panel of a reference widget.
+   * Insert a widget as a sibling tab to a reference widget.
    *
    * @param ref - The reference widget. If this is null, or is not
-   *   contained in the panel, the widget will be inserted at dock
-   *   panel's right edge.
+   *   contained in the panel, the widget will be inserted at the
+   *   right edge of the dock panel.
    *
    * @param widget - The widget to insert into the dock panel.
    */
   tabify(ref: Widget, widget: Widget): void {
-    if (ref === widget) throw new Error('invalid widget');
+    if (ref === widget) return;
     this._tabifyWidget(ref, widget);
   }
 
@@ -509,16 +554,16 @@ class DockPanel extends BoxPanel {
 
     // Dock the panel according to the indicated zone.
     switch (data.zone) {
-    case DockZone.BorderTop:
+    case DockZone.EdgeTop:
       this._addPanel(item.widget, Orientation.Vertical, false);
       break;
-    case DockZone.BorderLeft:
+    case DockZone.EdgeLeft:
       this._addPanel(item.widget, Orientation.Horizontal, false);
       break;
-    case DockZone.BorderRight:
+    case DockZone.EdgeRight:
       this._addPanel(item.widget, Orientation.Horizontal, true);
       break;
-    case DockZone.BorderBottom:
+    case DockZone.EdgeBottom:
       this._addPanel(item.widget, Orientation.Vertical, true);
       break;
     case DockZone.PanelTop:
@@ -731,25 +776,25 @@ class DockPanel extends BoxPanel {
 
     // Compute the overlay geometry based on the dock zone.
     switch (data.zone) {
-    case DockZone.BorderTop:
+    case DockZone.EdgeTop:
       top = box.paddingTop;
       left = box.paddingLeft;
       width = rect.width - box.horizontalSum;
       height = (rect.height - box.verticalSum) / 3;
       break;
-    case DockZone.BorderLeft:
+    case DockZone.EdgeLeft:
       top = box.paddingTop;
       left = box.paddingLeft;
       width = (rect.width - box.horizontalSum) / 3;
       height = rect.height - box.verticalSum;
       break;
-    case DockZone.BorderRight:
+    case DockZone.EdgeRight:
       top = box.paddingTop;
       width = (rect.width - box.horizontalSum) / 3;
       left = box.paddingLeft + 2 * width;
       height = rect.height - box.verticalSum;
       break;
-    case DockZone.BorderBottom:
+    case DockZone.EdgeBottom:
       height = (rect.height - box.verticalSum) / 3;
       top = box.paddingTop + 2 * height;
       left = box.paddingLeft;
@@ -793,7 +838,7 @@ class DockPanel extends BoxPanel {
     }
 
     // Show the overlay at the computed zone position.
-    this._overlay.show(left, top, width, height);
+    this._overlay.show(data.zone, left, top, width, height);
   }
 
   /**
@@ -933,24 +978,24 @@ interface IDragData {
  */
 const enum DockZone {
   /**
-   * The dock zone at the top border of the root split panel.
+   * The dock zone at the top edge of the root split panel.
    */
-  BorderTop,
+  EdgeTop,
 
   /**
-   * The dock zone at the left border of the root split panel.
+   * The dock zone at the left edge of the root split panel.
    */
-  BorderLeft,
+  EdgeLeft,
 
   /**
-   * The dock zone at the right border of the root split panel.
+   * The dock zone at the right edge of the root split panel.
    */
-  BorderRight,
+  EdgeRight,
 
   /**
-   * The dock zone at the bottom border of the root split panel.
+   * The dock zone at the bottom edge of the root split panel.
    */
-  BorderBottom,
+  EdgeBottom,
 
   /**
    * The dock zone at the top third of a tab panel.
@@ -1009,6 +1054,21 @@ interface IDockTarget {
  */
 class DockPanelOverlay extends NodeWrapper {
   /**
+   * A mapping of dock zone enum value to modifier class.
+   */
+  static zoneMap = [  // keep in-sync with DockZone enum
+    EDGE_TOP_CLASS,
+    EDGE_LEFT_CLASS,
+    EDGE_RIGHT_CLASS,
+    EDGE_BOTTOM_CLASS,
+    PANEL_TOP_CLASS,
+    PANEL_LEFT_CLASS,
+    PANEL_RIGHT_CLASS,
+    PANEL_BOTTOM_CLASS,
+    PANEL_CENTER_CLASS
+  ];
+
+  /**
    * Construct a new dock panel overlay.
    */
   constructor() {
@@ -1018,23 +1078,41 @@ class DockPanelOverlay extends NodeWrapper {
   }
 
   /**
-   * Show the overlay using the given absolute geometry.
+   * Show the overlay with the given zone and geometry
    */
-  show(left: number, top: number, width: number, height: number): void {
+  show(zone: DockZone, left: number, top: number, width: number, height: number): void {
     var style = this.node.style;
     style.top = top + 'px';
     style.left = left + 'px';
     style.width = width + 'px';
     style.height = height + 'px';
     this.removeClass(HIDDEN_CLASS);
+    this._setZone(zone);
   }
 
   /**
-   * Hide the overlay.
+   * Hide the overlay and reset its zone.
    */
   hide(): void {
     this.addClass(HIDDEN_CLASS);
+    this._setZone(DockZone.Invalid);
   }
+
+  /**
+   * Set the dock zone for the overlay.
+   */
+  private _setZone(zone: DockZone): void {
+    if (zone === this._zone) {
+      return;
+    }
+    var oldClass = DockPanelOverlay.zoneMap[this._zone];
+    var newClass = DockPanelOverlay.zoneMap[zone];
+    if (oldClass) this.removeClass(oldClass);
+    if (newClass) this.addClass(newClass);
+    this._zone = zone;
+  }
+
+  private _zone = DockZone.Invalid;
 }
 
 
@@ -1132,7 +1210,7 @@ function findDockTarget(root: DockSplitPanel, clientX: number, clientY: number):
   if (!hitTestRect(rect, clientX, clientY)) {
     return { zone: DockZone.Invalid, panel: null };
   }
-  var zone = getBorderZone(rect, clientX, clientY);
+  var zone = getEdgeZone(rect, clientX, clientY);
   if (zone !== DockZone.Invalid) {
     return { zone, panel: null };
   }
@@ -1169,30 +1247,30 @@ function findTargetRecursive(panel: DockSplitPanel, clientX: number, clientY: nu
  *
  * This assumes the position lies within the client rect.
  *
- * Returns the `Invalid` zone if the position is not within the border.
+ * Returns the `Invalid` zone if the position is not within the edge.
  */
-function getBorderZone(r: ClientRect, x: number, y: number): DockZone {
+function getEdgeZone(r: ClientRect, x: number, y: number): DockZone {
   var zone: DockZone;
-  if (x < r.left + BORDER_SIZE) {
+  if (x < r.left + EDGE_SIZE) {
     if (y - r.top < x - r.left) {
-      zone = DockZone.BorderTop;
+      zone = DockZone.EdgeTop;
     } else if (r.bottom - y < x - r.left) {
-      zone = DockZone.BorderBottom;
+      zone = DockZone.EdgeBottom;
     } else {
-      zone = DockZone.BorderLeft;
+      zone = DockZone.EdgeLeft;
     }
-  } else if (x >= r.right - BORDER_SIZE) {
+  } else if (x >= r.right - EDGE_SIZE) {
     if (y - r.top < r.right - x) {
-      zone = DockZone.BorderTop;
+      zone = DockZone.EdgeTop;
     } else if (r.bottom - y < r.right - x) {
-      zone = DockZone.BorderBottom;
+      zone = DockZone.EdgeBottom;
     } else {
-      zone = DockZone.BorderRight;
+      zone = DockZone.EdgeRight;
     }
-  } else if (y < r.top + BORDER_SIZE) {
-    zone = DockZone.BorderTop;
-  } else if (y >= r.bottom - BORDER_SIZE) {
-    zone = DockZone.BorderBottom;
+  } else if (y < r.top + EDGE_SIZE) {
+    zone = DockZone.EdgeTop;
+  } else if (y >= r.bottom - EDGE_SIZE) {
+    zone = DockZone.EdgeBottom;
   } else {
     zone = DockZone.Invalid;
   }
