@@ -58,16 +58,6 @@
     "url": "https://github.com/phosphorjs/phosphor-dockpanel.git"
   },
   "files": [
-    "lib/dockpanel.js",
-    "lib/dockpanel.d.ts",
-    "lib/dockpaneloverlay.js",
-    "lib/dockpaneloverlay.d.ts",
-    "lib/docksplitpanel.js",
-    "lib/docksplitpanel.d.ts",
-    "lib/docktabpanel.js",
-    "lib/docktabpanel.d.ts",
-    "lib/hittesting.js",
-    "lib/hittesting.d.ts",
     "lib/index.js",
     "lib/index.css",
     "lib/index.d.ts"

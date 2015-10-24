@@ -33,4 +33,5 @@
 
 .p-Tab.p-mod-docking {
   position: absolute;
+  transform: translateX(-40%) translateY(-58%);
 }
