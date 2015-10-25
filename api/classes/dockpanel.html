@@ -70,13 +70,13 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A widget which provides a flexible docking panel for content widgets.</p>
+						<p>A widget which provides a flexible docking area for content widgets.</p>
 					</div>
 					<h4 id="notes">Notes</h4>
-					<p>Widgets should be added to a <code>DockPanel</code> using the <a href="dockpanel.html#addwidget">addWidget</a>
-						method, <strong>not</strong> the inherited <code>&lt;prefix&gt;Child</code> methods. There is
-						no corresponding <code>removeWidget</code> method; simply set the <code>parent</code>
-					of a widget to <code>null</code> to remove it from a <code>DockPanel</code>.</p>
+					<p>Widgets should be added to a <code>DockPanel</code> using one of the dedicated
+						dock methods. The inherited <code>&lt;prefix&gt;Child</code> methods should <strong>not</strong>
+						be used. Widgets can be removed from a <code>DockPanel</code> by setting their
+					<code>parent</code> reference to <code>null</code>.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -113,8 +113,8 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_dragdata" class="tsd-kind-icon">_drag<wbr>Data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_ignoreremoved" class="tsd-kind-icon">_ignore<wbr>Removed</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_items" class="tsd-kind-icon">_items</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_overlay" class="tsd-kind-icon">_overlay</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_root" class="tsd-kind-icon">_root</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#boxsizing" class="tsd-kind-icon">box<wbr>Sizing</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#childcount" class="tsd-kind-icon">child<wbr>Count</a></li>
@@ -130,32 +130,22 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#offsetrect" class="tsd-kind-icon">offset<wbr>Rect</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#parent" class="tsd-kind-icon">parent</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#sizelimits" class="tsd-kind-icon">size<wbr>Limits</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#spacing" class="tsd-kind-icon">spacing</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#bottomtotop" class="tsd-kind-icon">Bottom<wbr>ToTop</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#lefttoright" class="tsd-kind-icon">Left<wbr>ToRight</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#righttoleft" class="tsd-kind-icon">Right<wbr>ToLeft</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#splitbottom" class="tsd-kind-icon">Split<wbr>Bottom</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#splitleft" class="tsd-kind-icon">Split<wbr>Left</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#splitright" class="tsd-kind-icon">Split<wbr>Right</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#splittop" class="tsd-kind-icon">Split<wbr>Top</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#tabafter" class="tsd-kind-icon">Tab<wbr>After</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#tabbefore" class="tsd-kind-icon">Tab<wbr>Before</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#toptobottom" class="tsd-kind-icon">Top<wbr>ToBottom</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#directionproperty" class="tsd-kind-icon">direction<wbr>Property</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#disposedsignal" class="tsd-kind-icon">disposed<wbr>Signal</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#handlesizeproperty" class="tsd-kind-icon">handle<wbr>Size<wbr>Property</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#hiddenproperty" class="tsd-kind-icon">hidden<wbr>Property</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_boxpanel" class="tsd-kind-icon">p_<wbr><wbr>Box<wbr>Panel</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#p_dockpanel" class="tsd-kind-icon">p_<wbr><wbr>Dock<wbr>Panel</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_widget" class="tsd-kind-icon">p_<wbr><wbr>Widget</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_mod_bottom_to_top" class="tsd-kind-icon">p_<wbr>mod_<wbr>bottom_<wbr>to_<wbr>top</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#p_mod_docking" class="tsd-kind-icon">p_<wbr>mod_<wbr>docking</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_mod_hidden" class="tsd-kind-icon">p_<wbr>mod_<wbr>hidden</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_mod_left_to_right" class="tsd-kind-icon">p_<wbr>mod_<wbr>left_<wbr>to_<wbr>right</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_mod_right_to_left" class="tsd-kind-icon">p_<wbr>mod_<wbr>right_<wbr>to_<wbr>left</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#p_mod_top_to_bottom" class="tsd-kind-icon">p_<wbr>mod_<wbr>top_<wbr>to_<wbr>bottom</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#sizebasisproperty" class="tsd-kind-icon">size<wbr>Basis<wbr>Property</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#spacingproperty" class="tsd-kind-icon">spacing<wbr>Property</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-static"><a href="dockpanel.html#spacingproperty" class="tsd-kind-icon">spacing<wbr>Property</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#stretchproperty" class="tsd-kind-icon">stretch<wbr>Property</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="dockpanel.html#tabproperty" class="tsd-kind-icon">tab<wbr>Property</a></li>
 							</ul>
@@ -163,7 +153,7 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="dockpanel.html#handlesize" class="tsd-kind-icon">handle<wbr>Size</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite"><a href="dockpanel.html#spacing" class="tsd-kind-icon">spacing</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -174,23 +164,24 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_createsplitpanel" class="tsd-kind-icon">_create<wbr>Split<wbr>Panel</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_createtabpanel" class="tsd-kind-icon">_create<wbr>Tab<wbr>Panel</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_ensureroot" class="tsd-kind-icon">_ensure<wbr>Root</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_evtcontextmenu" class="tsd-kind-icon">_evt<wbr>Context<wbr>Menu</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_evtmousemove" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Move</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_evtmouseup" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Up</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_finditembytab" class="tsd-kind-icon">_find<wbr>Item<wbr>ByTab</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_finditembywidget" class="tsd-kind-icon">_find<wbr>Item<wbr>ByWidget</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_onhandlesizechanged" class="tsd-kind-icon">_on<wbr>Handle<wbr>Size<wbr>Changed</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_onspacingchanged" class="tsd-kind-icon">_on<wbr>Spacing<wbr>Changed</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_ontabcloserequested" class="tsd-kind-icon">_on<wbr>Tab<wbr>Close<wbr>Requested</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_ontabdetachrequested" class="tsd-kind-icon">_on<wbr>Tab<wbr>Detach<wbr>Requested</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_ontabselected" class="tsd-kind-icon">_on<wbr>Tab<wbr>Selected</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_onwidgetremoved" class="tsd-kind-icon">_on<wbr>Widget<wbr>Removed</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_removepanel" class="tsd-kind-icon">_remove<wbr>Panel</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_showoverlay" class="tsd-kind-icon">_show<wbr>Overlay</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_splitpanel" class="tsd-kind-icon">_split<wbr>Panel</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_splitwidget" class="tsd-kind-icon">_split<wbr>Widget</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_tabifypanel" class="tsd-kind-icon">_tabify<wbr>Panel</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="dockpanel.html#_tabifywidget" class="tsd-kind-icon">_tabify<wbr>Widget</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#addchild" class="tsd-kind-icon">add<wbr>Child</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#addclass" class="tsd-kind-icon">add<wbr>Class</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="dockpanel.html#addwidget" class="tsd-kind-icon">add<wbr>Widget</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#childat" class="tsd-kind-icon">child<wbr>At</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#childindex" class="tsd-kind-icon">child<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#clearboxsizing" class="tsd-kind-icon">clear<wbr>Box<wbr>Sizing</a></li>
@@ -223,6 +214,11 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#removeclass" class="tsd-kind-icon">remove<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#setoffsetgeometry" class="tsd-kind-icon">set<wbr>Offset<wbr>Geometry</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#setsizelimits" class="tsd-kind-icon">set<wbr>Size<wbr>Limits</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="dockpanel.html#splitbottom" class="tsd-kind-icon">split<wbr>Bottom</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="dockpanel.html#splitleft" class="tsd-kind-icon">split<wbr>Left</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="dockpanel.html#splitright" class="tsd-kind-icon">split<wbr>Right</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="dockpanel.html#splittop" class="tsd-kind-icon">split<wbr>Top</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="dockpanel.html#tabify" class="tsd-kind-icon">tabify</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#toggleclass" class="tsd-kind-icon">toggle<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="dockpanel.html#update" class="tsd-kind-icon">update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="dockpanel.html#createnode" class="tsd-kind-icon">create<wbr>Node</a></li>
@@ -250,7 +246,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites BoxPanel.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L194">index.ts:194</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L202">index.ts:202</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -271,17 +267,7 @@
 					<div class="tsd-signature tsd-kind-icon">_drag<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IDragData</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L873">index.ts:873</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_ignoreremoved" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _ignore<wbr>Removed</h3>
-					<div class="tsd-signature tsd-kind-icon">_ignore<wbr>Removed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L871">index.ts:871</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L924">index.ts:924</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -291,7 +277,17 @@
 					<div class="tsd-signature tsd-kind-icon">_items<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IDockItem</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L872">index.ts:872</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L923">index.ts:923</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_overlay" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _overlay</h3>
+					<div class="tsd-signature tsd-kind-icon">_overlay<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DockPanelOverlay</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L925">index.ts:925</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -301,7 +297,7 @@
 					<div class="tsd-signature tsd-kind-icon">_root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DockSplitPanel</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L870">index.ts:870</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L922">index.ts:922</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -595,24 +591,6 @@
 						<p><strong>See also:</strong> <a href="dockpanel.html#setsizelimits">setSizeLimits</a>, <a href="dockpanel.html#clearsizelimits">clearSizeLimits</a></p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="spacing" class="tsd-anchor"></a>
-					<h3>spacing</h3>
-					<div class="tsd-signature tsd-kind-icon">spacing<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from BoxPanel.spacing</p>
-						<ul>
-							<li>Defined in /home/travis/build/phosphorjs/phosphor-dockpanel/node_modules/phosphor-boxpanel/lib/index.d.ts:181</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Set the inter-element spacing for the box panel.</p>
-						</div>
-						<h4 id="notes">Notes</h4>
-						<p>This is a pure delegate to the <a href="dockpanel.html#spacingproperty">spacingProperty</a>.</p>
-					</div>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="bottomtotop" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> Bottom<wbr>ToTop</h3>
@@ -658,96 +636,6 @@
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>A convenience alias of the <code>RightToLeft</code> [[Direction]].</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="splitbottom" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> Split<wbr>Bottom</h3>
-					<div class="tsd-signature tsd-kind-icon">Split<wbr>Bottom<span class="tsd-signature-symbol">:</span> <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L124">index.ts:124</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A convenience alias of the <code>SplitBottom</code> <a href="../enums/dockmode.html">DockMode</a>.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="splitleft" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> Split<wbr>Left</h3>
-					<div class="tsd-signature tsd-kind-icon">Split<wbr>Left<span class="tsd-signature-symbol">:</span> <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L114">index.ts:114</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A convenience alias of the <code>SplitLeft</code> <a href="../enums/dockmode.html">DockMode</a>.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="splitright" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> Split<wbr>Right</h3>
-					<div class="tsd-signature tsd-kind-icon">Split<wbr>Right<span class="tsd-signature-symbol">:</span> <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L119">index.ts:119</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A convenience alias of the <code>SplitRight</code> <a href="../enums/dockmode.html">DockMode</a>.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="splittop" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> Split<wbr>Top</h3>
-					<div class="tsd-signature tsd-kind-icon">Split<wbr>Top<span class="tsd-signature-symbol">:</span> <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L109">index.ts:109</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A convenience alias of the <code>SplitTop</code> <a href="../enums/dockmode.html">DockMode</a>.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="tabafter" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> Tab<wbr>After</h3>
-					<div class="tsd-signature tsd-kind-icon">Tab<wbr>After<span class="tsd-signature-symbol">:</span> <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L134">index.ts:134</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A convenience alias of the <code>TabAfter</code> <a href="../enums/dockmode.html">DockMode</a>.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="tabbefore" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> Tab<wbr>Before</h3>
-					<div class="tsd-signature tsd-kind-icon">Tab<wbr>Before<span class="tsd-signature-symbol">:</span> <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L129">index.ts:129</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A convenience alias of the <code>TabBefore</code> <a href="../enums/dockmode.html">DockMode</a>.</p>
 						</div>
 					</div>
 				</section>
@@ -803,24 +691,6 @@
 						<p><strong>See also:</strong> <a href="dockpanel.html#disposed">disposed</a>, <a href="dockpanel.html#isdisposed">isDisposed</a></p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="handlesizeproperty" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> handle<wbr>Size<wbr>Property</h3>
-					<div class="tsd-signature tsd-kind-icon">handle<wbr>Size<wbr>Property<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Property</span><span class="tsd-signature-symbol">&lt;</span><a href="dockpanel.html" class="tsd-signature-type">DockPanel</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L162">index.ts:162</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The property descriptor for the dock panel handle size.</p>
-						</div>
-						<p>The controls the size of the split handles placed between the
-						tabbed panel, in pixels. The default value is <code>3</code>.</p>
-						<p><strong>See also:</strong> <a href="dockpanel.html#handlesize">handleSize</a></p>
-					</div>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="hiddenproperty" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> hidden<wbr>Property</h3>
@@ -862,21 +732,6 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="p_dockpanel" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> p_<wbr><wbr>Dock<wbr>Panel</h3>
-					<div class="tsd-signature tsd-kind-icon">p_<wbr><wbr>Dock<wbr>Panel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L99">index.ts:99</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The class name added to DockPanel instances.</p>
-						</div>
-					</div>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="p_widget" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> p_<wbr><wbr>Widget</h3>
@@ -906,21 +761,6 @@
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The class name added to bottom-to-top box panels.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="p_mod_docking" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> p_<wbr>mod_<wbr>docking</h3>
-					<div class="tsd-signature tsd-kind-icon">p_<wbr>mod_<wbr>docking<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L104">index.ts:104</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The class name added to a tab which is being docked.</p>
 						</div>
 					</div>
 				</section>
@@ -1009,22 +849,22 @@
 						<p><strong>See also:</strong> <a href="dockpanel.html#getsizebasis">getSizeBasis</a>, <a href="dockpanel.html#setsizebasis">setSizeBasis</a></p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
 					<a name="spacingproperty" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> spacing<wbr>Property</h3>
-					<div class="tsd-signature tsd-kind-icon">spacing<wbr>Property<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Property</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BoxPanel</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">spacing<wbr>Property<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Property</span><span class="tsd-signature-symbol">&lt;</span><a href="dockpanel.html" class="tsd-signature-type">DockPanel</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from BoxPanel.spacingProperty</p>
+						<p>Overwrites BoxPanel.spacingProperty</p>
 						<ul>
-							<li>Defined in /home/travis/build/phosphorjs/phosphor-dockpanel/node_modules/phosphor-boxpanel/lib/index.d.ts:82</li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L170">index.ts:170</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The property descriptor for the box panel spacing.</p>
+							<p>The property descriptor for the dock panel spacing.</p>
 						</div>
-						<p>The controls the fixed spacing between the child widgets, in
-						pixels. The default value is <code>8</code>.</p>
+						<p>The controls the spacing between the panels, in pixels. The default
+						value is <code>3</code>.</p>
 						<p><strong>See also:</strong> <a href="dockpanel.html#spacing">spacing</a></p>
 					</div>
 				</section>
@@ -1054,7 +894,7 @@
 					<div class="tsd-signature tsd-kind-icon">tab<wbr>Property<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Property</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Tab</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L149">index.ts:149</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L157">index.ts:157</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1073,41 +913,43 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-					<a name="handlesize" class="tsd-anchor"></a>
-					<h3>handle<wbr>Size</h3>
-					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> handleSize<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> handleSize<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+					<a name="spacing" class="tsd-anchor"></a>
+					<h3>spacing</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> spacing<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> spacing<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overwrites BoxPanel.spacing</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L222">index.ts:222</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L231">index.ts:231</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Get the handle size of the dock split panels.</p>
+									<p>Get the spacing between the docked panels.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
-								<p>This is a pure delegate to the <a href="dockpanel.html#handlesizeproperty">handleSizeProperty</a>.</p>
+								<p>This is a pure delegate to the <a href="dockpanel.html#spacingproperty">spacingProperty</a>.</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overwrites BoxPanel.spacing</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L232">index.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L241">index.ts:241</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Set the handle size of the dock split panels.</p>
+									<p>Set the spacing between the docked panels.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
-								<p>This is a pure delegate to the <a href="dockpanel.html#handlesizeproperty">handleSizeProperty</a>.</p>
+								<p>This is a pure delegate to the <a href="dockpanel.html#spacingproperty">spacingProperty</a>.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1132,7 +974,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L707">index.ts:707</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L711">index.ts:711</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1154,12 +996,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L345">index.ts:345</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L440">index.ts:440</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add a widget to a new tab panel along the given orientation.</p>
+									<p>Add a widget to a new border panel along the given orientation.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1188,7 +1030,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L634">index.ts:634</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L638">index.ts:638</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1216,7 +1058,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L622">index.ts:622</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L626">index.ts:626</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1238,7 +1080,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L599">index.ts:599</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L603">index.ts:603</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1257,6 +1099,34 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="_evtcontextmenu" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _evt<wbr>Context<wbr>Menu</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">_evt<wbr>Context<wbr>Menu<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MouseEvent</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L595">index.ts:595</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Handle the <code>&#39;contextmenu&#39;</code> event for the dock panel.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>event: <span class="tsd-signature-type">MouseEvent</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="_evtmousemove" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _evt<wbr>Mouse<wbr>Move</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -1266,14 +1136,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L434">index.ts:434</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L473">index.ts:473</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Handle the <code>&#39;mousemove&#39;</code> event for the dock panel.</p>
 								</div>
-								<p>This is triggered on the document during a tab move operation.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1295,14 +1164,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L510">index.ts:510</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L496">index.ts:496</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Handle the &#39;mouseup&#39; event for the dock panel.</p>
+									<p>Handle the <code>&#39;mouseup&#39;</code> event for the dock panel.</p>
 								</div>
-								<p>This is triggered on the document during a tab move operation.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1324,7 +1192,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L750">index.ts:750</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L741">index.ts:741</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1353,7 +1221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L759">index.ts:759</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L750">index.ts:750</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1373,21 +1241,21 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="_onhandlesizechanged" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _on<wbr>Handle<wbr>Size<wbr>Changed</h3>
+					<a name="_onspacingchanged" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _on<wbr>Spacing<wbr>Changed</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">_on<wbr>Handle<wbr>Size<wbr>Changed<span class="tsd-signature-symbol">(</span>old<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_on<wbr>Spacing<wbr>Changed<span class="tsd-signature-symbol">(</span>old<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L766">index.ts:766</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L847">index.ts:847</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>The change handler for the <a href="dockpanel.html#handlesizeproperty">handleSizeProperty</a>.</p>
+									<p>The change handler for the <a href="dockpanel.html#spacingproperty">spacingProperty</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1413,7 +1281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L783">index.ts:783</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L862">index.ts:862</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1444,7 +1312,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L791">index.ts:791</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L870">index.ts:870</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1475,7 +1343,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L773">index.ts:773</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L854">index.ts:854</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1506,7 +1374,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L854">index.ts:854</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L909">index.ts:909</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1537,7 +1405,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L647">index.ts:647</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L651">index.ts:651</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1558,6 +1426,38 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="_showoverlay" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _show<wbr>Overlay</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">_show<wbr>Overlay<span class="tsd-signature-symbol">(</span>clientX<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, clientY<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L759">index.ts:759</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Show the dock panel overlay indicator at the given client position.</p>
+								</div>
+								<p>If the position is not over a dock zone, the overlay is hidden.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>clientX: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>clientY: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="_splitpanel" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _split<wbr>Panel</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -1567,12 +1467,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L368">index.ts:368</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L366">index.ts:366</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Split a dock item with a widget along the given orientation.</p>
+									<p>Split a panel with a widget along the given orientation.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1598,27 +1498,27 @@
 					<a name="_splitwidget" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _split<wbr>Widget</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">_split<wbr>Widget<span class="tsd-signature-symbol">(</span>widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, orientation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Orientation</span>, after<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_split<wbr>Widget<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, orientation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Orientation</span>, after<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L321">index.ts:321</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L342">index.ts:342</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add the dock widget as a new split panel next to the reference.</p>
+									<p>Add a widget to a new tab panel next to a reference.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
+									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
 								</li>
 								<li>
-									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
 								</li>
 								<li>
 									<h5>orientation: <span class="tsd-signature-type">Orientation</span></h5>
@@ -1635,30 +1535,27 @@
 					<a name="_tabifypanel" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _tabify<wbr>Panel</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">_tabify<wbr>Panel<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IDockItem</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, after<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_tabify<wbr>Panel<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DockTabPanel</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L415">index.ts:415</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L418">index.ts:418</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add a widget to the tab panel of a given dock item.</p>
+									<p>Add a widget to the specified tab panel.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>item: <span class="tsd-signature-type">IDockItem</span></h5>
+									<h5>target: <span class="tsd-signature-type">DockTabPanel</span></h5>
 								</li>
 								<li>
 									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
-								</li>
-								<li>
-									<h5>after: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1669,30 +1566,27 @@
 					<a name="_tabifywidget" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _tabify<wbr>Widget</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">_tabify<wbr>Widget<span class="tsd-signature-symbol">(</span>widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, after<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_tabify<wbr>Widget<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L333">index.ts:333</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L354">index.ts:354</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add the dock widget as a tab next to the reference.</p>
+									<p>Add a widget as the tab panel which owns a reference.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
-								</li>
-								<li>
 									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
 								</li>
 								<li>
-									<h5>after: <span class="tsd-signature-type">boolean</span></h5>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1768,62 +1662,6 @@
 										<p>The class name to add to the node.</p>
 										<h4 id="notes">Notes</h4>
 										<p>If the class name is already added to the node, this is a no-op.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addwidget" class="tsd-anchor"></a>
-					<h3>add<wbr>Widget</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Widget<span class="tsd-signature-symbol">(</span>widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, mode<span class="tsd-signature-symbol">?: </span><a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a>, ref<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L261">index.ts:261</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Add a widget to the dock panel according to the given dock mode.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The widget to add to the dock panel.</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> mode: <a href="../enums/dockmode.html" class="tsd-signature-type">DockMode</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The insertion mode for the widget. This controls how
-											the widget is inserted relative to the reference widget. If this
-										is not provided, <code>DockMode.SplitLeft</code> is assumed.</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ref: <span class="tsd-signature-type">Widget</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The reference widget which controls the placement of
-											the added widget. If this is not provided, or is not contained
-										in the dock panel, the widget is inserted relative to the root.</p>
-										<h4 id="notes">Notes</h4>
-										<p>If the dock widget is already added to the panel, it will be moved
-										to the new location.</p>
-										<p>The <code>DockPanel.tab</code> attached property <strong>must</strong> be set with the tab
-											to use for the widget, or an error will be thrown. This can be set
-											via <code>DockPanel.setTab</code>. This property is assumed to stay constant
-										while the widget is contained by the dock panel.</p>
-										<p>If the <code>widget</code> and the <code>ref</code> are the same object, an error will
-										be thrown.</p>
 									</div>
 								</li>
 							</ul>
@@ -2106,7 +1944,7 @@
 							<aside class="tsd-sources">
 								<p>Overwrites BoxPanel.dispose</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L209">index.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L218">index.ts:218</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2128,7 +1966,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L303">index.ts:303</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L325">index.ts:325</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2930,6 +2768,201 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="splitbottom" class="tsd-anchor"></a>
+					<h3>split<wbr>Bottom</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">split<wbr>Bottom<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L296">index.ts:296</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Insert a widget below a reference widget.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The reference widget. If this is null, or is not
+											contained in the panel, the widget will be inserted at the
+										bottom edge of the dock panel.</p>
+									</div>
+								</li>
+								<li>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The widget to insert into the dock panel.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="splitleft" class="tsd-anchor"></a>
+					<h3>split<wbr>Left</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">split<wbr>Left<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L268">index.ts:268</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Insert a widget to the left of a reference widget.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The reference widget. If this is null, or is not
+											contained in the panel, the widget will be inserted at the
+										left edge of the dock panel.</p>
+									</div>
+								</li>
+								<li>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The widget to insert into the dock panel.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="splitright" class="tsd-anchor"></a>
+					<h3>split<wbr>Right</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">split<wbr>Right<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L282">index.ts:282</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Insert a widget to the right of a reference widget.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The reference widget. If this is null, or is not
+											contained in the panel, the widget will be inserted at the
+										right edge of the dock panel.</p>
+									</div>
+								</li>
+								<li>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The widget to insert into the dock panel.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="splittop" class="tsd-anchor"></a>
+					<h3>split<wbr>Top</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">split<wbr>Top<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L254">index.ts:254</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Insert a widget above a reference widget.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The reference widget. If this is null, or is not
+											contained in the panel, the widget will be inserted at the
+										top edge of the dock panel.</p>
+									</div>
+								</li>
+								<li>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The widget to insert into the dock panel.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="tabify" class="tsd-anchor"></a>
+					<h3>tabify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">tabify<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span>, widget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Widget</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L310">index.ts:310</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Insert a widget as a sibling tab to a reference widget.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ref: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The reference widget. If this is null, or is not
+											contained in the panel, the widget will be inserted at the
+										right edge of the dock panel.</p>
+									</div>
+								</li>
+								<li>
+									<h5>widget: <span class="tsd-signature-type">Widget</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The widget to insert into the dock panel.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="toggleclass" class="tsd-anchor"></a>
 					<h3>toggle<wbr>Class</h3>
@@ -3112,7 +3145,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L178">index.ts:178</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L186">index.ts:186</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3226,7 +3259,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L192">index.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-dockpanel/blob/HEAD/src/index.ts#L200">index.ts:200</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3267,9 +3300,6 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum">
-						<a href="../enums/dockmode.html" class="tsd-kind-icon">Dock<wbr>Mode</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
@@ -3282,10 +3312,10 @@
 								<a href="dockpanel.html#_dragdata" class="tsd-kind-icon">_drag<wbr>Data</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="dockpanel.html#_ignoreremoved" class="tsd-kind-icon">_ignore<wbr>Removed</a>
+								<a href="dockpanel.html#_items" class="tsd-kind-icon">_items</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="dockpanel.html#_items" class="tsd-kind-icon">_items</a>
+								<a href="dockpanel.html#_overlay" class="tsd-kind-icon">_overlay</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="dockpanel.html#_root" class="tsd-kind-icon">_root</a>
@@ -3332,9 +3362,6 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="dockpanel.html#sizelimits" class="tsd-kind-icon">size<wbr>Limits</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="dockpanel.html#spacing" class="tsd-kind-icon">spacing</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#bottomtotop" class="tsd-kind-icon">Bottom<wbr>ToTop</a>
 							</li>
@@ -3343,24 +3370,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#righttoleft" class="tsd-kind-icon">Right<wbr>ToLeft</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#splitbottom" class="tsd-kind-icon">Split<wbr>Bottom</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#splitleft" class="tsd-kind-icon">Split<wbr>Left</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#splitright" class="tsd-kind-icon">Split<wbr>Right</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#splittop" class="tsd-kind-icon">Split<wbr>Top</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#tabafter" class="tsd-kind-icon">Tab<wbr>After</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#tabbefore" class="tsd-kind-icon">Tab<wbr>Before</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#toptobottom" class="tsd-kind-icon">Top<wbr>ToBottom</a>
@@ -3371,26 +3380,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#disposedsignal" class="tsd-kind-icon">disposed<wbr>Signal</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#handlesizeproperty" class="tsd-kind-icon">handle<wbr>Size<wbr>Property</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#hiddenproperty" class="tsd-kind-icon">hidden<wbr>Property</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#p_boxpanel" class="tsd-kind-icon">p_<wbr><wbr>Box<wbr>Panel</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#p_dockpanel" class="tsd-kind-icon">p_<wbr><wbr>Dock<wbr>Panel</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#p_widget" class="tsd-kind-icon">p_<wbr><wbr>Widget</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#p_mod_bottom_to_top" class="tsd-kind-icon">p_<wbr>mod_<wbr>bottom_<wbr>to_<wbr>top</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="dockpanel.html#p_mod_docking" class="tsd-kind-icon">p_<wbr>mod_<wbr>docking</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#p_mod_hidden" class="tsd-kind-icon">p_<wbr>mod_<wbr>hidden</a>
@@ -3407,7 +3407,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="dockpanel.html#sizebasisproperty" class="tsd-kind-icon">size<wbr>Basis<wbr>Property</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
 								<a href="dockpanel.html#spacingproperty" class="tsd-kind-icon">spacing<wbr>Property</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
@@ -3416,8 +3416,8 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="dockpanel.html#tabproperty" class="tsd-kind-icon">tab<wbr>Property</a>
 							</li>
-							<li class=" tsd-kind-accessor tsd-parent-kind-class">
-								<a href="dockpanel.html#handlesize" class="tsd-kind-icon">handle<wbr>Size</a>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="dockpanel.html#spacing" class="tsd-kind-icon">spacing</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="dockpanel.html#_abortdrag" class="tsd-kind-icon">_abort<wbr>Drag</a>
@@ -3435,6 +3435,9 @@
 								<a href="dockpanel.html#_ensureroot" class="tsd-kind-icon">_ensure<wbr>Root</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="dockpanel.html#_evtcontextmenu" class="tsd-kind-icon">_evt<wbr>Context<wbr>Menu</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="dockpanel.html#_evtmousemove" class="tsd-kind-icon">_evt<wbr>Mouse<wbr>Move</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -3447,7 +3450,7 @@
 								<a href="dockpanel.html#_finditembywidget" class="tsd-kind-icon">_find<wbr>Item<wbr>ByWidget</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="dockpanel.html#_onhandlesizechanged" class="tsd-kind-icon">_on<wbr>Handle<wbr>Size<wbr>Changed</a>
+								<a href="dockpanel.html#_onspacingchanged" class="tsd-kind-icon">_on<wbr>Spacing<wbr>Changed</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="dockpanel.html#_ontabcloserequested" class="tsd-kind-icon">_on<wbr>Tab<wbr>Close<wbr>Requested</a>
@@ -3463,6 +3466,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="dockpanel.html#_removepanel" class="tsd-kind-icon">_remove<wbr>Panel</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="dockpanel.html#_showoverlay" class="tsd-kind-icon">_show<wbr>Overlay</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="dockpanel.html#_splitpanel" class="tsd-kind-icon">_split<wbr>Panel</a>
@@ -3481,9 +3487,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="dockpanel.html#addclass" class="tsd-kind-icon">add<wbr>Class</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="dockpanel.html#addwidget" class="tsd-kind-icon">add<wbr>Widget</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="dockpanel.html#childat" class="tsd-kind-icon">child<wbr>At</a>
@@ -3580,6 +3583,21 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="dockpanel.html#setsizelimits" class="tsd-kind-icon">set<wbr>Size<wbr>Limits</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="dockpanel.html#splitbottom" class="tsd-kind-icon">split<wbr>Bottom</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="dockpanel.html#splitleft" class="tsd-kind-icon">split<wbr>Left</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="dockpanel.html#splitright" class="tsd-kind-icon">split<wbr>Right</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="dockpanel.html#splittop" class="tsd-kind-icon">split<wbr>Top</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="dockpanel.html#tabify" class="tsd-kind-icon">tabify</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="dockpanel.html#toggleclass" class="tsd-kind-icon">toggle<wbr>Class</a>
