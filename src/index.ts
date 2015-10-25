@@ -160,17 +160,17 @@ class DockPanel extends BoxPanel {
   });
 
   /**
-   * The property descriptor for the dock panel handle size.
+   * The property descriptor for the dock panel spacing.
    *
-   * The controls the size of the split handles placed between the
-   * tabbed panel, in pixels. The default value is `3`.
+   * The controls the spacing between the panels, in pixels. The default
+   * value is `3`.
    *
-   * **See also:** [[handleSize]]
+   * **See also:** [[spacing]]
    */
-  static handleSizeProperty = new Property<DockPanel, number>({
+  static spacingProperty = new Property<DockPanel, number>({
     value: 3,
     coerce: (owner, value) => Math.max(0, value | 0),
-    changed: (owner, old, value) => owner._onHandleSizeChanged(old, value),
+    changed: (owner, old, value) => owner._onSpacingChanged(old, value),
   });
 
   /**
@@ -223,23 +223,23 @@ class DockPanel extends BoxPanel {
   }
 
   /**
-   * Get the handle size of the dock split panels.
+   * Get the spacing between the docked panels.
    *
    * #### Notes
-   * This is a pure delegate to the [[handleSizeProperty]].
+   * This is a pure delegate to the [[spacingProperty]].
    */
-  get handleSize(): number {
-    return DockPanel.handleSizeProperty.get(this);
+  get spacing(): number {
+    return DockPanel.spacingProperty.get(this);
   }
 
   /**
-   * Set the handle size of the dock split panels.
+   * Set the spacing between the docked panels.
    *
    * #### Notes
-   * This is a pure delegate to the [[handleSizeProperty]].
+   * This is a pure delegate to the [[spacingProperty]].
    */
-  set handleSize(value: number) {
-    DockPanel.handleSizeProperty.set(this, value);
+  set spacing(value: number) {
+    DockPanel.spacingProperty.set(this, value);
   }
 
   /**
@@ -638,7 +638,7 @@ class DockPanel extends BoxPanel {
   private _createSplitPanel(orientation: Orientation): DockSplitPanel {
     var panel = new DockSplitPanel();
     panel.orientation = orientation;
-    panel.handleSize = this.handleSize;
+    panel.spacing = this.spacing;
     return panel;
   }
 
@@ -842,10 +842,10 @@ class DockPanel extends BoxPanel {
   }
 
   /**
-   * The change handler for the [[handleSizeProperty]].
+   * The change handler for the [[spacingProperty]].
    */
-  private _onHandleSizeChanged(old: number, value: number): void {
-    this._root.setHandleSizeRecursive(value);
+  private _onSpacingChanged(old: number, value: number): void {
+    this._root.setSpacingRecursive(value);
   }
 
   /**
@@ -1129,19 +1129,16 @@ class DockSplitPanel extends SplitPanel {
   }
 
   /**
-   * Recursively set the handle size for this split panel.
-   *
-   * This will apply the given handle size to this panel as
-   * well as its direct descendant split panels.
+   * Recursively set the spacing for the split panel hierarchy.
    */
-  setHandleSizeRecursive(size: number): void {
+  setSpacingRecursive(spacing: number): void {
     for (var i = 0, n = this.childCount; i < n; ++i) {
       var child = this.childAt(i);
       if (child instanceof DockSplitPanel) {
-        child.setHandleSizeRecursive(size);
+        child.setSpacingRecursive(spacing);
       }
     }
-    this.handleSize = size;
+    this.spacing = spacing;
   }
 }
 
