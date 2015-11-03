@@ -8,7 +8,7 @@
 'use-strict';
 
 import {
-  Widget, attachWidget
+  Widget
 } from 'phosphor-widget';
 
 import {
@@ -72,7 +72,7 @@ function main(): void {
   panel.tabify(g2, g3);
   panel.tabify(g2, b3);
 
-  attachWidget(panel, document.body);
+  Widget.attach(panel, document.body);
 
   window.onresize = () => panel.update();
 }

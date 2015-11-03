@@ -19,7 +19,7 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  overrideCursor
+  boxSizing, overrideCursor
 } from 'phosphor-domutil';
 
 import {
@@ -771,7 +771,7 @@ class DockPanel extends BoxPanel {
     var left: number;
     var width: number;
     var height: number;
-    var box = this.boxSizing;
+    var box = boxSizing(this.node);
     var rect = this.node.getBoundingClientRect();
 
     // Compute the overlay geometry based on the dock zone.
