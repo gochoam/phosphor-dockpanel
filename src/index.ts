@@ -11,7 +11,7 @@ import * as arrays
   from 'phosphor-arrays';
 
 import {
-  hitTest
+  DragData, DragHandler, hitTest
 } from 'phosphor-domutil';
 
 import {
@@ -31,7 +31,7 @@ import {
 } from 'phosphor-stackedpanel';
 
 import {
-  TabPanel
+  TabBar, TabPanel, TearOffMessage
 } from 'phosphor-tabs';
 
 import {
@@ -55,6 +55,11 @@ const SPLIT_PANEL_CLASS = 'p-DockSplitPanel';
  * The class name added to dock tab panels.
  */
 const TAB_PANEL_CLASS = 'p-DockTabPanel';
+
+/**
+ * The class name added to dock tab bars.
+ */
+const TAB_BAR_CLASS = 'p-DockTabBar';
 
 /**
  * The class name added to dock panel overlays.
@@ -258,6 +263,106 @@ class DockPanel extends StackedPanel {
 
 
 /**
+ * A custom tab bar used by a DockTabPanel.
+ */
+class DockTabBar extends TabBar<Widget> {
+  /**
+   * Construct a new dock tab bar.
+   */
+  constructor() {
+    super();
+    this.addClass(TAB_BAR_CLASS);
+    this.tabsMovable = true;
+  }
+
+  /**
+   * Dispose of the resources held by the tab bar.
+   */
+  dispose(): void {
+    this._disposeDragHandler();
+    super.dispose();
+  }
+
+  /**
+   * A message handler invoked on a `'tear-off-request'` message.
+   */
+  protected onTearOffRequest(msg: TearOffMessage<Widget>): void {
+    // Do nothing if a drag is already in progress.
+    if (this._dragHandler) {
+      return;
+    }
+
+    // Release the tab bar's hold on the mouse.
+    this.releaseMouse();
+
+    // Setup the mime data for the drag operation.
+    let widget = msg.item;
+    let factory = () => widget;
+    let data = { 'application/x-phosphor-widget-factory': factory };
+
+    // TODO - what happens if `widget` is disposed during drag?
+
+    // Create a new drag handler to manage the drag.
+    this._dragHandler = new DragHandler(msg.node, this);
+    this._dragHandler.onDragEnd = this._onDragEnd;
+
+    // Start the drag operation.
+    this._dragHandler.start(msg.clientX, msg.clientY, data);
+  }
+
+  /**
+   * A handler invoked when the drag operation ends.
+   */
+  private _onDragEnd(event: MouseEvent, data: DragData): void {
+    this._disposeDragHandler();
+  }
+
+  /**
+   * Dispose of the internal drag handler, if it exists.
+   */
+  private _disposeDragHandler(): void {
+    if (this._dragHandler) {
+      this._dragHandler.dispose();
+      this._dragHandler = null;
+    }
+  }
+
+  private _dragHandler: DragHandler = null;
+}
+
+
+/**
+ * A custom tab panel used by a DockPanel.
+ */
+class DockTabPanel extends TabPanel {
+  /**
+   * Create the tab bar for the tab panel.
+   */
+  static createTabBar(): DockTabBar {
+    return new DockTabBar();
+  }
+
+  /**
+   * Construct a new dock tab panel.
+   */
+  constructor() {
+    super();
+    this.addClass(TAB_PANEL_CLASS);
+    this.widgets.changed.connect(this._onWidgetsChanged, this);
+  }
+
+  /**
+   * Handle the `changed` signal for the widget list.
+   *
+   * This will remove the tab panel if the widget count is zero.
+   */
+  private _onWidgetsChanged(sender: IObservableList<Widget>) {
+    if (sender.length === 0) removeTabPanel(this);
+  }
+}
+
+
+/**
  * A custom split panel used by a DockPanel.
  */
 class DockSplitPanel extends SplitPanel {
@@ -269,31 +374,6 @@ class DockSplitPanel extends SplitPanel {
     this.addClass(SPLIT_PANEL_CLASS);
     this.orientation = orientation;
     this.spacing = spacing;
-  }
-}
-
-
-/**
- * A custom tab panel used by a DockPanel.
- */
-class DockTabPanel extends TabPanel {
-  /**
-   * Construct a new dock tab panel.
-   */
-  constructor() {
-    super();
-    this.addClass(TAB_PANEL_CLASS);
-    this.tabsMovable = true;
-    this.widgets.changed.connect(this._onWidgetsChanged, this);
-  }
-
-  /**
-   * Handle the `changed` signal for the widget list.
-   *
-   * This will remove the tab panel if the widget count is zero.
-   */
-  private _onWidgetsChanged(sender: IObservableList<Widget>) {
-    if (sender.length === 0) removeTabPanel(this);
   }
 }
 
