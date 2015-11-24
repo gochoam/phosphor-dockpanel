@@ -11,6 +11,10 @@ import * as arrays
   from 'phosphor-arrays';
 
 import {
+  hitTest
+} from 'phosphor-domutil';
+
+import {
   IObservableList
 } from 'phosphor-observablelist';
 
@@ -750,4 +754,202 @@ function removeTabPanel(tabPanel: DockTabPanel): void {
   // Update the grand parent sizes and dispose the removed panel.
   grandPanel.setSizes(grandSizes);
   splitPanel.dispose();
+}
+
+
+/**
+ * An enum of the interactive dock zones for a dock panel.
+ */
+const enum DockZone {
+  /**
+   * The dock zone at the top edge of the root split panel.
+   */
+  EdgeTop,
+
+  /**
+   * The dock zone at the left edge of the root split panel.
+   */
+  EdgeLeft,
+
+  /**
+   * The dock zone at the right edge of the root split panel.
+   */
+  EdgeRight,
+
+  /**
+   * The dock zone at the bottom edge of the root split panel.
+   */
+  EdgeBottom,
+
+  /**
+   * The dock zone at the top third of a tab panel.
+   */
+  PanelTop,
+
+  /**
+   * The dock zone at the left third of a tab panel.
+   */
+  PanelLeft,
+
+  /**
+   * The dock zone at the right third of a tab panel.
+   */
+  PanelRight,
+
+  /**
+   * The dock zone at the bottom third of a tab panel.
+   */
+  PanelBottom,
+
+  /**
+   * The dock zone at the center of a tab panel.
+   */
+  PanelCenter,
+
+  /**
+   * An invalid dock zone.
+   */
+  Invalid,
+}
+
+
+/**
+ * The result object for a dock target hit test.
+ */
+interface IDockTarget {
+  /**
+   * The dock zone at the specified position.
+   *
+   * This will be `Invalid` if the position is not over a dock zone.
+   */
+  zone: DockZone;
+
+  /**
+   * The dock tab panel for the panel dock zone.
+   *
+   * This will be `null` if the dock zone is not a panel zone.
+   */
+  tabPanel: DockTabPanel;
+}
+
+
+/**
+ * Find the dock target for the given client position.
+ */
+function findDockTarget(root: RootPanel, clientX: number, clientY: number): IDockTarget {
+  if (!hitTest(root.node, clientX, clientY)) {
+    return { zone: DockZone.Invalid, tabPanel: null };
+  }
+  let zone = getEdgeZone(root.node, clientX, clientY);
+  if (zone !== DockZone.Invalid) {
+    return { zone: zone, tabPanel: null };
+  }
+  let found = iterTabPanels(root, tabs => {
+    return hitTest(tabs.node, clientX, clientX) ? tabs : void 0;
+  });
+  if (!found) {
+    return { zone: DockZone.Invalid, tabPanel: null };
+  }
+  zone = getPanelZone(found.node, clientX, clientY);
+  return { zone: zone, tabPanel: found };
+}
+
+
+/**
+ * Recursively iterate over the dock tab panels of root panel.
+ *
+ * Iteration stops if the callback returns anything but `undefined`.
+ */
+function iterTabPanels<T>(root: RootPanel, callback: (tabs: DockTabPanel) => T): T {
+  if (root instanceof DockTabPanel) {
+    return callback(root);
+  }
+  if (!(root instanceof DockSplitPanel)) {
+    internalError();
+  }
+  let children = root.children;
+  for (let i = 0; i < children.length; ++i) {
+    let child = children.get(i) as RootPanel;
+    let result = iterTabPanels(child, callback);
+    if (result !== void 0) return result;
+  }
+  return void 0;
+}
+
+
+/**
+ * Get the panel zone for the given node and client position.
+ *
+ * This assumes the position lies within the node's client rect.
+ *
+ * Returns the `Invalid` zone if the position is not within an edge.
+ */
+function getEdgeZone(node: HTMLElement, x: number, y: number): DockZone {
+  let zone: DockZone;
+  let rect = node.getBoundingClientRect();
+  if (x < rect.left + EDGE_SIZE) {
+    if (y - rect.top < x - rect.left) {
+      zone = DockZone.EdgeTop;
+    } else if (rect.bottom - y < x - rect.left) {
+      zone = DockZone.EdgeBottom;
+    } else {
+      zone = DockZone.EdgeLeft;
+    }
+  } else if (x >= rect.right - EDGE_SIZE) {
+    if (y - rect.top < rect.right - x) {
+      zone = DockZone.EdgeTop;
+    } else if (rect.bottom - y < rect.right - x) {
+      zone = DockZone.EdgeBottom;
+    } else {
+      zone = DockZone.EdgeRight;
+    }
+  } else if (y < rect.top + EDGE_SIZE) {
+    zone = DockZone.EdgeTop;
+  } else if (y >= rect.bottom - EDGE_SIZE) {
+    zone = DockZone.EdgeBottom;
+  } else {
+    zone = DockZone.Invalid;
+  }
+  return zone;
+}
+
+
+/**
+ * Get the panel zone for the given node and position.
+ *
+ * This assumes the position lies within the node's client rect.
+ *
+ * This always returns a valid zone.
+ */
+function getPanelZone(node: HTMLElement, x: number, y: number): DockZone {
+  let zone: DockZone;
+  let rect = node.getBoundingClientRect();
+  let fracX = (x - rect.left) / rect.width;
+  let fracY = (y - rect.top) / rect.height;
+  if (fracX < 1 / 3) {
+    if (fracY < fracX) {
+      zone = DockZone.PanelTop;
+    } else if (1 - fracY < fracX) {
+      zone = DockZone.PanelBottom;
+    } else {
+      zone = DockZone.PanelLeft;
+    }
+  } else if (fracX < 2 / 3) {
+    if (fracY < 1 / 3) {
+      zone = DockZone.PanelTop;
+    } else if (fracY < 2 / 3) {
+      zone = DockZone.PanelCenter;
+    } else {
+      zone = DockZone.PanelBottom;
+    }
+  } else {
+    if (fracY < 1 - fracX) {
+      zone = DockZone.PanelTop;
+    } else if (fracY > fracX) {
+      zone = DockZone.PanelBottom;
+    } else {
+      zone = DockZone.PanelRight;
+    }
+  }
+  return zone;
 }
