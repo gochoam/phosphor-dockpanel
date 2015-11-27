@@ -887,10 +887,10 @@ function dispatchDragEnter(drag: Drag, currElem: Element, currTarget: Element, e
 
   // Dispatch a drag enter event to the current element.
   let dragEvent = createDragEvent('p-dragenter', drag, event, currTarget);
-  currElem.dispatchEvent(dragEvent);
+  let canceled = !currElem.dispatchEvent(dragEvent);
 
   // If the event was canceled, use the current element as the new target.
-  if (dragEvent.defaultPrevented) {
+  if (canceled) {
     return currElem;
   }
 
@@ -961,10 +961,10 @@ function dispatchDragOver(drag: Drag, currTarget: Element, event: MouseEvent): D
 
   // Dispatch the drag over event to the current target.
   let dragEvent = createDragEvent('p-dragover', drag, event, null);
-  currTarget.dispatchEvent(dragEvent);
+  let canceled = !currTarget.dispatchEvent(dragEvent);
 
   // If the event was canceled, return the drop action result.
-  if (dragEvent.defaultPrevented) {
+  if (canceled) {
     return dragEvent.dropAction;
   }
 
@@ -997,10 +997,10 @@ function dispatchDrop(drag: Drag, currTarget: Element, event: MouseEvent): DropA
 
   // Dispatch the drop event to the current target.
   let dragEvent = createDragEvent('p-drop', drag, event, null);
-  currTarget.dispatchEvent(dragEvent);
+  let canceled = !currTarget.dispatchEvent(dragEvent);
 
   // If the event was canceled, return the drop action result.
-  if (dragEvent.defaultPrevented) {
+  if (canceled) {
     return dragEvent.dropAction;
   }
 
