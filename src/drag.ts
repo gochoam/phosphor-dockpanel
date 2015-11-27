@@ -338,15 +338,16 @@ interface IDragOptions {
  *   of the other events.
  *
  * - `'p-dragover'` - Dispatched when the mouse moves over the drop
- *   target. It must set the `dropAction` to one of the supported
- *   actions in order to receive drop events.
+ *   target. It must cancel the event and set the `dropAction` to one
+ *   of the supported actions in order to receive drop events.
  *
  * - `'p-dragleave'` - Dispatched when the mouse leaves the target
- *   element. This includes mousing into child elements.
+ *   element. This includes moving the mouse into child elements.
  *
  * - `'p-drop'`- Dispatched when the mouse is released over the target
- *   element and the target indicates an appropriate drop action. The
- *   drop action performed by this event is returned by the promise.
+ *   element when the target indicates an appropriate drop action. If
+ *   the event is canceled, the indicated drop action is returned to
+ *   the initiator through the resolved promise.
  *
  * A drag operation can be canceled at any time by pressing `Escape`
  * or by disposing the drag object.
