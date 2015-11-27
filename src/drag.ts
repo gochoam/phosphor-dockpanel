@@ -574,10 +574,6 @@ class Drag implements IDisposable {
     // Update the current element reference.
     this._currentElement = currElem;
 
-    // Move the drag image to the specified client position. This is
-    // performed *after* hit testing to prevent an unnecessary reflow.
-    this._moveDragImage(event.clientX, event.clientY);
-
     // Note: drag enter fires *before* drag leave according to spec.
     // https://html.spec.whatwg.org/multipage/interaction.html#drag-and-drop-processing-model
 
@@ -598,6 +594,10 @@ class Drag implements IDisposable {
     // Dispatch the drag over event and update the drop action.
     let action = dispatchDragOver(this, currTarget, event);
     this._setDropAction(action);
+
+    // Move the drag image to the specified client position. This is
+    // performed *after* everything to prevent unnecessary reflows.
+    this._moveDragImage(event.clientX, event.clientY);
   }
 
   /**
