@@ -11,12 +11,16 @@ import * as arrays
   from 'phosphor-arrays';
 
 import {
-  DragData, DragHandler, hitTest
+  boxSizing, hitTest
 } from 'phosphor-domutil';
 
 import {
-  IObservableList
-} from 'phosphor-observablelist';
+  Message
+} from 'phosphor-messaging';
+
+import {
+  NodeWrapper
+} from 'phosphor-nodewrapper';
 
 import {
   Property
@@ -38,6 +42,10 @@ import {
   Widget
 } from 'phosphor-widget';
 
+import {
+  Drag, DropAction, DropActions, IDragEvent, MimeData
+} from './drag';
+
 import './index.css';
 
 
@@ -47,9 +55,9 @@ import './index.css';
 const DOCK_PANEL_CLASS = 'p-DockPanel';
 
 /**
- * The class name added to dock split panels.
+ * The class name added to dock tab bars.
  */
-const SPLIT_PANEL_CLASS = 'p-DockSplitPanel';
+const TAB_BAR_CLASS = 'p-DockTabBar';
 
 /**
  * The class name added to dock tab panels.
@@ -57,9 +65,9 @@ const SPLIT_PANEL_CLASS = 'p-DockSplitPanel';
 const TAB_PANEL_CLASS = 'p-DockTabPanel';
 
 /**
- * The class name added to dock tab bars.
+ * The class name added to dock split panels.
  */
-const TAB_BAR_CLASS = 'p-DockTabBar';
+const SPLIT_PANEL_CLASS = 'p-DockSplitPanel';
 
 /**
  * The class name added to dock panel overlays.
@@ -67,29 +75,34 @@ const TAB_BAR_CLASS = 'p-DockTabBar';
 const OVERLAY_CLASS = 'p-DockPanelOverlay';
 
 /**
- * The class name added to hidden overlays.
+ * The class name added to hidden overlays and tabs.
  */
 const HIDDEN_CLASS = 'p-mod-hidden';
 
 /**
- * The class name added to top edge dock overlays.
+ * The class name added to top root dock overlays.
  */
-const EDGE_TOP_CLASS = 'p-mod-edge-top';
+const ROOT_TOP_CLASS = 'p-mod-root-top';
 
 /**
- * The class name added to left edge dock overlays.
+ * The class name added to left root dock overlays.
  */
-const EDGE_LEFT_CLASS = 'p-mod-edge-left';
+const ROOT_LEFT_CLASS = 'p-mod-root-left';
 
 /**
- * The class name added to right edge dock overlays.
+ * The class name added to right root dock overlays.
  */
-const EDGE_RIGHT_CLASS = 'p-mod-edge-right';
+const ROOT_RIGHT_CLASS = 'p-mod-root-right';
 
 /**
- * The class name added to bottom edge dock overlays.
+ * The class name added to bottom root dock overlays.
  */
-const EDGE_BOTTOM_CLASS = 'p-mod-edge-bottom';
+const ROOT_BOTTOM_CLASS = 'p-mod-root-bottom';
+
+/**
+ * The class name added to center root dock overlays.
+ */
+const ROOT_CENTER_CLASS = 'p-mod-root-center';
 
 /**
  * The class name added to top panel dock overlays.
@@ -117,6 +130,11 @@ const PANEL_BOTTOM_CLASS = 'p-mod-panel-bottom';
 const PANEL_CENTER_CLASS = 'p-mod-panel-center';
 
 /**
+ * The factory MIME type supported by the dock panel.
+ */
+const FACTORY_MIME = 'application/x-phosphor-widget-factory';
+
+/**
  * The size of the edge dock zone for the root panel.
  */
 const EDGE_SIZE = 30;
@@ -132,6 +150,19 @@ const EDGE_SIZE = 30;
  */
 export
 class DockPanel extends StackedPanel {
+  /**
+   * Ensure the specified content widget is selected.
+   *
+   * @param widget - The content widget of interest.
+   *
+   * #### Notes
+   * If the widget is not contained in a dock panel, or is already
+   * the selected tab in its respective tab panel, this is a no-op.
+   */
+  static select(widget: Widget): void {
+    selectWidget(widget);
+  }
+
   /**
    * The property descriptor for the spacing between panels.
    *
@@ -173,8 +204,6 @@ class DockPanel extends StackedPanel {
   set spacing(value: number) {
     DockPanel.spacingProperty.set(this, value);
   }
-
-  // TODO - need a method to manually select a widget.
 
   /**
    * Insert a widget as a new panel above a reference widget.
@@ -259,6 +288,204 @@ class DockPanel extends StackedPanel {
   insertTabAfter(widget: Widget, ref?: Widget): void {
     insertTab(this, widget, ref, true);
   }
+
+  /**
+   * Handle the DOM events for the dock panel.
+   *
+   * @param event - The DOM event sent to the dock panel.
+   *
+   * #### Notes
+   * This method implements the DOM `EventListener` interface and is
+   * called in response to events on the dock panel's node. It should
+   * not be called directly by user code.
+   */
+  handleEvent(event: Event): void {
+    switch (event.type) {
+    case 'p-dragenter':
+      this._evtDragEnter(event as IDragEvent);
+      break;
+    case 'p-dragleave':
+      this._evtDragLeave(event as IDragEvent);
+      break;
+    case 'p-dragover':
+      this._evtDragOver(event as IDragEvent);
+      break;
+    case 'p-drop':
+      this._evtDrop(event as IDragEvent);
+      break;
+    }
+  }
+
+  /**
+   * A message handler invoked on an `'after-attach'` message.
+   */
+  protected onAfterAttach(msg: Message): void {
+    super.onAfterAttach(msg);
+    let node = this.node;
+    node.addEventListener('p-dragenter', this);
+    node.addEventListener('p-dragleave', this);
+    node.addEventListener('p-dragover', this);
+    node.addEventListener('p-drop', this);
+  }
+
+  /**
+   * A message handler invoked on a `'before-detach'` message.
+   */
+  protected onBeforeDetach(msg: Message): void {
+    super.onBeforeDetach(msg);
+    let node = this.node;
+    node.removeEventListener('p-dragenter', this);
+    node.removeEventListener('p-dragleave', this);
+    node.removeEventListener('p-dragover', this);
+    node.removeEventListener('p-drop', this);
+  }
+
+  /**
+   * Handle the `'p-dragenter'` event for the dock panel.
+   */
+  private _evtDragEnter(event: IDragEvent): void {
+    if (event.mimeData.hasData(FACTORY_MIME)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  /**
+   * Handle the `'p-dragleave'` event for the dock panel.
+   */
+  private _evtDragLeave(event: IDragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    let related = event.relatedTarget as HTMLElement;
+    if (!related || !this.node.contains(related)) {
+      hideOverlay(this);
+    }
+  }
+
+  /**
+   * Handle the `'p-dragover'` event for the dock panel.
+   */
+  private _evtDragOver(event: IDragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    let zone = showOverlay(this, event.clientX, event.clientY);
+    if (zone === DockZone.Invalid) {
+      event.dropAction = DropAction.None;
+    } else {
+      event.dropAction = event.proposedAction;
+    }
+  }
+
+  /**
+   * Handle the `'p-drop'` event for the dock panel.
+   */
+  private _evtDrop(event: IDragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    hideOverlay(this);
+    if (event.proposedAction === DropAction.None) {
+      event.dropAction = DropAction.None;
+      return;
+    }
+    let target = findDockTarget(this, event.clientX, event.clientY);
+    if (target.zone === DockZone.Invalid) {
+      event.dropAction = DropAction.None;
+      return;
+    }
+    let factory = event.mimeData.getData(FACTORY_MIME);
+    if (typeof factory !== 'function') {
+      event.dropAction = DropAction.None;
+      return;
+    }
+    let widget = factory();
+    if (!(widget instanceof Widget)) {
+      event.dropAction = DropAction.None;
+      return;
+    }
+    handleDrop(this, widget, target);
+    event.dropAction = event.proposedAction;
+  }
+}
+
+
+/**
+ * An enum of the dock zones for a dock panel.
+ */
+const enum DockZone {
+  /**
+   * The dock zone at the top of the root split panel.
+   */
+  RootTop,
+
+  /**
+   * The dock zone at the left of the root split panel.
+   */
+  RootLeft,
+
+  /**
+   * The dock zone at the right of the root split panel.
+   */
+  RootRight,
+
+  /**
+   * The dock zone at the bottom of the root split panel.
+   */
+  RootBottom,
+
+  /**
+   * The dock zone at the center of the root split panel.
+   */
+  RootCenter,
+
+  /**
+   * The dock zone at the top third of a tab panel.
+   */
+  PanelTop,
+
+  /**
+   * The dock zone at the left third of a tab panel.
+   */
+  PanelLeft,
+
+  /**
+   * The dock zone at the right third of a tab panel.
+   */
+  PanelRight,
+
+  /**
+   * The dock zone at the bottom third of a tab panel.
+   */
+  PanelBottom,
+
+  /**
+   * The dock zone at the center of a tab panel.
+   */
+  PanelCenter,
+
+  /**
+   * An invalid dock zone.
+   */
+  Invalid,
+}
+
+
+/**
+ * The result object for a dock target hit test.
+ */
+interface IDockTarget {
+  /**
+   * The dock zone at the specified position.
+   *
+   * This will be `Invalid` if the position is not over a dock zone.
+   */
+  zone: DockZone;
+
+  /**
+   * The dock tab panel for the panel dock zone.
+   *
+   * This will be `null` if the dock zone is not a panel zone.
+   */
+  panel: DockTabPanel;
 }
 
 
@@ -279,7 +506,10 @@ class DockTabBar extends TabBar<Widget> {
    * Dispose of the resources held by the tab bar.
    */
   dispose(): void {
-    this._disposeDragHandler();
+    if (this._drag) {
+      this._drag.dispose();
+      this._drag = null;
+    }
     super.dispose();
   }
 
@@ -288,7 +518,7 @@ class DockTabBar extends TabBar<Widget> {
    */
   protected onTearOffRequest(msg: TearOffMessage<Widget>): void {
     // Do nothing if a drag is already in progress.
-    if (this._dragHandler) {
+    if (this._drag) {
       return;
     }
 
@@ -297,37 +527,30 @@ class DockTabBar extends TabBar<Widget> {
 
     // Setup the mime data for the drag operation.
     let widget = msg.item;
-    let factory = () => widget;
-    let data = { 'application/x-phosphor-widget-factory': factory };
+    let mimeData = new MimeData();
+    mimeData.setData(FACTORY_MIME, () => widget);
 
-    // TODO - what happens if `widget` is disposed during drag?
+    // Create the drag image for the drag operation.
+    let tabNode = msg.node;
+    let dragImage = tabNode.cloneNode(true) as HTMLElement;
 
-    // Create a new drag handler to manage the drag.
-    this._dragHandler = new DragHandler(msg.node, this);
-    this._dragHandler.onDragEnd = this._onDragEnd;
+    // Create the drag object to manage the drag-drop operation.
+    this._drag = new Drag({
+      mimeData: mimeData,
+      dragImage: dragImage,
+      proposedAction: DropAction.Move,
+      supportedActions: DropActions.Move,
+    });
 
-    // Start the drag operation.
-    this._dragHandler.start(msg.clientX, msg.clientY, data);
+    // Start the drag operation and cleanup when done.
+    tabNode.classList.add(HIDDEN_CLASS);
+    this._drag.start(msg.clientX, msg.clientY).then(() => {
+      this._drag = null;
+      tabNode.classList.remove(HIDDEN_CLASS);
+    });
   }
 
-  /**
-   * A handler invoked when the drag operation ends.
-   */
-  private _onDragEnd(event: MouseEvent, data: DragData): void {
-    this._disposeDragHandler();
-  }
-
-  /**
-   * Dispose of the internal drag handler, if it exists.
-   */
-  private _disposeDragHandler(): void {
-    if (this._dragHandler) {
-      this._dragHandler.dispose();
-      this._dragHandler = null;
-    }
-  }
-
-  private _dragHandler: DragHandler = null;
+  private _drag: Drag = null;
 }
 
 
@@ -356,8 +579,8 @@ class DockTabPanel extends TabPanel {
    *
    * This will remove the tab panel if the widget count is zero.
    */
-  private _onWidgetsChanged(sender: IObservableList<Widget>) {
-    if (sender.length === 0) removeTabPanel(this);
+  private _onWidgetsChanged() {
+    if (this.widgets.length === 0) removeTabPanel(this);
   }
 }
 
@@ -379,10 +602,70 @@ class DockSplitPanel extends SplitPanel {
 
 
 /**
- * Throw an internal dock panel error.
+ * A node wrapper used as an overlay dock indicator for a dock panel.
  */
-function internalError(): void {
-  throw new Error('Internal DockPanel Error.');
+class DockPanelOverlay extends NodeWrapper {
+  /**
+   * A mapping of dock zone enum value to modifier class.
+   */
+  static zoneMap = [  // keep in-sync with DockZone enum
+    ROOT_TOP_CLASS,
+    ROOT_LEFT_CLASS,
+    ROOT_RIGHT_CLASS,
+    ROOT_BOTTOM_CLASS,
+    ROOT_CENTER_CLASS,
+    PANEL_TOP_CLASS,
+    PANEL_LEFT_CLASS,
+    PANEL_RIGHT_CLASS,
+    PANEL_BOTTOM_CLASS,
+    PANEL_CENTER_CLASS
+  ];
+
+  /**
+   * Construct a new dock panel overlay.
+   */
+  constructor() {
+    super();
+    this.addClass(OVERLAY_CLASS);
+    this.addClass(HIDDEN_CLASS);
+  }
+
+  /**
+   * Show the overlay with the given zone and geometry
+   */
+  show(zone: DockZone, left: number, top: number, width: number, height: number): void {
+    let style = this.node.style;
+    style.top = top + 'px';
+    style.left = left + 'px';
+    style.width = width + 'px';
+    style.height = height + 'px';
+    this.removeClass(HIDDEN_CLASS);
+    this._setZone(zone);
+  }
+
+  /**
+   * Hide the overlay and reset its zone.
+   */
+  hide(): void {
+    this.addClass(HIDDEN_CLASS);
+    this._setZone(DockZone.Invalid);
+  }
+
+  /**
+   * Set the dock zone for the overlay.
+   */
+  private _setZone(zone: DockZone): void {
+    if (zone === this._zone) {
+      return;
+    }
+    let oldClass = DockPanelOverlay.zoneMap[this._zone];
+    let newClass = DockPanelOverlay.zoneMap[zone];
+    if (oldClass) this.removeClass(oldClass);
+    if (newClass) this.addClass(newClass);
+    this._zone = zone;
+  }
+
+  private _zone = DockZone.Invalid;
 }
 
 
@@ -398,6 +681,16 @@ type RootPanel = DockSplitPanel | DockTabPanel;
 const rootProperty = new Property<DockPanel, RootPanel>({
   name: 'root',
   value: null,
+  changed: onRootChanged,
+});
+
+
+/**
+ * A private attached property for the dock panel overlay.
+ */
+const overlayProperty = new Property<DockPanel, DockPanelOverlay>({
+  name: 'overlay',
+  create: createOverlay,
 });
 
 
@@ -414,10 +707,40 @@ function getRoot(panel: DockPanel): RootPanel {
  */
 function setRoot(panel: DockPanel, root: RootPanel): void {
   rootProperty.set(panel, root);
-  if (root) {
-    root.parent = panel;
-    panel.currentWidget = root;
-  }
+}
+
+
+/**
+ * The change handler for the dock panel `rootProperty`.
+ *
+ * This will re-parent the new root and set it as the current widget.
+ *
+ * The old root is not modified.
+ */
+function onRootChanged(panel: DockPanel, old: RootPanel, root: RootPanel): void {
+  if (!root) return;
+  root.parent = panel;
+  panel.currentWidget = root;
+}
+
+
+/**
+ * Get the overlay for a dock panel.
+ */
+function getOverlay(panel: DockPanel): DockPanelOverlay {
+  return overlayProperty.get(panel);
+}
+
+
+/**
+ * The creation handler for the dock panel `overlayProperty`.
+ *
+ * This will create and install the overlay for the panel.
+ */
+function createOverlay(panel: DockPanel): DockPanelOverlay {
+  let overlay = new DockPanelOverlay();
+  panel.node.appendChild(overlay.node);
+  return overlay;
 }
 
 
@@ -444,6 +767,14 @@ function updateSpacing(panel: DockSplitPanel, spacing: number): void {
     }
   }
   panel.spacing = spacing;
+}
+
+
+/**
+ * Throw an internal dock panel error.
+ */
+function internalError(): void {
+  throw new Error('Internal DockPanel Error.');
 }
 
 
@@ -480,8 +811,8 @@ function dockPanelContains(panel: DockPanel, widget: Widget): boolean {
 /**
  * Find the ancestor dock tab panel for the given widget.
  *
- * This assumes the widget already belongs to a dock panel,
- * and will throw an error if that assumption does not hold.
+ * This assumes the widget already belongs to a dock panel, and will
+ * throw an error if that assumption does not hold.
  */
 function findTabPanel(widget: Widget): DockTabPanel {
   let stack = widget.parent;
@@ -541,24 +872,42 @@ function ensureFirstTabPanel(panel: DockPanel): DockTabPanel {
  * since that would violate the invariants of the dock panel structure.
  */
 function ensureSplitRoot(panel: DockPanel, orientation: Orientation): DockSplitPanel {
-  let root = getRoot(panel);
-  if (!root) {
+  let oldRoot = getRoot(panel);
+  if (!oldRoot) {
     internalError();
   }
-  if (root instanceof DockSplitPanel) {
-    if (root.orientation === orientation) {
-      return root;
+  if (oldRoot instanceof DockSplitPanel) {
+    if (oldRoot.orientation === orientation) {
+      return oldRoot;
     }
-    if (root.children.length <= 1) {
-      root.orientation = orientation;
-      return root;
+    if (oldRoot.children.length <= 1) {
+      oldRoot.orientation = orientation;
+      return oldRoot;
     }
   }
   let newRoot = new DockSplitPanel(orientation, panel.spacing);
-  newRoot.children.add(root);
+  newRoot.children.add(oldRoot);
   setRoot(panel, newRoot);
-  root.hidden = false;
+  oldRoot.hidden = false;
   return newRoot;
+}
+
+
+/**
+ * Ensure the given widget is the current widget in its tab panel.
+ *
+ * This is a no-op if the widget is not contained in a dock tab panel.
+ */
+function selectWidget(widget: Widget): void {
+  let stack = widget.parent;
+  if (!stack) {
+    return;
+  }
+  let tabs = stack.parent;
+  if (!(tabs instanceof DockTabPanel)) {
+    return;
+  }
+  (tabs as DockTabPanel).currentWidget = widget;
 }
 
 
@@ -570,7 +919,7 @@ function ensureSplitRoot(panel: DockPanel, orientation: Orientation): DockSplitP
  */
 function validateInsertArgs(panel: DockPanel, widget: Widget, ref: Widget): void {
   if (!widget) {
-    throw new Error('Target insert widget is null.');
+    throw new Error('Target widget is null.');
   }
   if (ref && !dockPanelContains(panel, ref)) {
     throw new Error('Reference widget not contained by the dock panel.');
@@ -838,105 +1187,7 @@ function removeTabPanel(tabPanel: DockTabPanel): void {
 
 
 /**
- * An enum of the interactive dock zones for a dock panel.
- */
-const enum DockZone {
-  /**
-   * The dock zone at the top edge of the root split panel.
-   */
-  EdgeTop,
-
-  /**
-   * The dock zone at the left edge of the root split panel.
-   */
-  EdgeLeft,
-
-  /**
-   * The dock zone at the right edge of the root split panel.
-   */
-  EdgeRight,
-
-  /**
-   * The dock zone at the bottom edge of the root split panel.
-   */
-  EdgeBottom,
-
-  /**
-   * The dock zone at the top third of a tab panel.
-   */
-  PanelTop,
-
-  /**
-   * The dock zone at the left third of a tab panel.
-   */
-  PanelLeft,
-
-  /**
-   * The dock zone at the right third of a tab panel.
-   */
-  PanelRight,
-
-  /**
-   * The dock zone at the bottom third of a tab panel.
-   */
-  PanelBottom,
-
-  /**
-   * The dock zone at the center of a tab panel.
-   */
-  PanelCenter,
-
-  /**
-   * An invalid dock zone.
-   */
-  Invalid,
-}
-
-
-/**
- * The result object for a dock target hit test.
- */
-interface IDockTarget {
-  /**
-   * The dock zone at the specified position.
-   *
-   * This will be `Invalid` if the position is not over a dock zone.
-   */
-  zone: DockZone;
-
-  /**
-   * The dock tab panel for the panel dock zone.
-   *
-   * This will be `null` if the dock zone is not a panel zone.
-   */
-  tabPanel: DockTabPanel;
-}
-
-
-/**
- * Find the dock target for the given client position.
- */
-function findDockTarget(root: RootPanel, clientX: number, clientY: number): IDockTarget {
-  if (!hitTest(root.node, clientX, clientY)) {
-    return { zone: DockZone.Invalid, tabPanel: null };
-  }
-  let zone = getEdgeZone(root.node, clientX, clientY);
-  if (zone !== DockZone.Invalid) {
-    return { zone: zone, tabPanel: null };
-  }
-  let found = iterTabPanels(root, tabs => {
-    return hitTest(tabs.node, clientX, clientX) ? tabs : void 0;
-  });
-  if (!found) {
-    return { zone: DockZone.Invalid, tabPanel: null };
-  }
-  zone = getPanelZone(found.node, clientX, clientY);
-  return { zone: zone, tabPanel: found };
-}
-
-
-/**
- * Recursively iterate over the dock tab panels of root panel.
+ * Recursively iterate over the dock tab panels of a root panel.
  *
  * Iteration stops if the callback returns anything but `undefined`.
  */
@@ -958,7 +1209,7 @@ function iterTabPanels<T>(root: RootPanel, callback: (tabs: DockTabPanel) => T):
 
 
 /**
- * Get the panel zone for the given node and client position.
+ * Get the root edge zone for the given node and client position.
  *
  * This assumes the position lies within the node's client rect.
  *
@@ -969,24 +1220,24 @@ function getEdgeZone(node: HTMLElement, x: number, y: number): DockZone {
   let rect = node.getBoundingClientRect();
   if (x < rect.left + EDGE_SIZE) {
     if (y - rect.top < x - rect.left) {
-      zone = DockZone.EdgeTop;
+      zone = DockZone.RootTop;
     } else if (rect.bottom - y < x - rect.left) {
-      zone = DockZone.EdgeBottom;
+      zone = DockZone.RootBottom;
     } else {
-      zone = DockZone.EdgeLeft;
+      zone = DockZone.RootLeft;
     }
   } else if (x >= rect.right - EDGE_SIZE) {
     if (y - rect.top < rect.right - x) {
-      zone = DockZone.EdgeTop;
+      zone = DockZone.RootTop;
     } else if (rect.bottom - y < rect.right - x) {
-      zone = DockZone.EdgeBottom;
+      zone = DockZone.RootBottom;
     } else {
-      zone = DockZone.EdgeRight;
+      zone = DockZone.RootRight;
     }
   } else if (y < rect.top + EDGE_SIZE) {
-    zone = DockZone.EdgeTop;
+    zone = DockZone.RootTop;
   } else if (y >= rect.bottom - EDGE_SIZE) {
-    zone = DockZone.EdgeBottom;
+    zone = DockZone.RootBottom;
   } else {
     zone = DockZone.Invalid;
   }
@@ -1032,4 +1283,211 @@ function getPanelZone(node: HTMLElement, x: number, y: number): DockZone {
     }
   }
   return zone;
+}
+
+
+/**
+ * Find the dock target for the given client position.
+ */
+function findDockTarget(panel: DockPanel, clientX: number, clientY: number): IDockTarget {
+  let root = getRoot(panel);
+  if (!root) {
+    return { zone: DockZone.RootCenter, panel: null };
+  }
+  if (!hitTest(root.node, clientX, clientY)) {
+    return { zone: DockZone.Invalid, panel: null };
+  }
+  let edgeZone = getEdgeZone(root.node, clientX, clientY);
+  if (edgeZone !== DockZone.Invalid) {
+    return { zone: edgeZone, panel: null };
+  }
+  let hitPanel = iterTabPanels(root, tabs => {
+    return hitTest(tabs.node, clientX, clientY) ? tabs : void 0;
+  });
+  if (!hitPanel) {
+    return { zone: DockZone.Invalid, panel: null };
+  }
+  let panelZone = getPanelZone(hitPanel.node, clientX, clientY);
+  return { zone: panelZone, panel: hitPanel };
+}
+
+
+/**
+ * Hide the dock panel overlay for the given dock panel.
+ */
+function hideOverlay(panel: DockPanel): void {
+  getOverlay(panel).hide();
+}
+
+
+/**
+ * Show the dock panel overlay indicator at the given client position.
+ *
+ * If the position is not over a dock zone, the overlay is hidden.
+ *
+ * This returns the dock zone used to display the overlay.
+ */
+function showOverlay(panel: DockPanel, clientX: number, clientY: number): DockZone {
+  // Find the dock target for the given client position.
+  let target = findDockTarget(panel, clientX, clientY);
+
+  // If the dock zone is invalid, hide the overlay and bail.
+  if (target.zone === DockZone.Invalid) {
+    getOverlay(panel).hide();
+    return target.zone;
+  }
+
+  // Setup the variables needed to compute the overlay geometry.
+  let top: number;
+  let left: number;
+  let width: number;
+  let height: number;
+  let pcr: ClientRect;
+  let box = boxSizing(panel.node); // TODO cache this?
+  let rect = panel.node.getBoundingClientRect();
+
+  // Compute the overlay geometry based on the dock zone.
+  switch (target.zone) {
+  case DockZone.RootTop:
+    top = box.paddingTop;
+    left = box.paddingLeft;
+    width = rect.width - box.horizontalSum;
+    height = (rect.height - box.verticalSum) / 3;
+    break;
+  case DockZone.RootLeft:
+    top = box.paddingTop;
+    left = box.paddingLeft;
+    width = (rect.width - box.horizontalSum) / 3;
+    height = rect.height - box.verticalSum;
+    break;
+  case DockZone.RootRight:
+    top = box.paddingTop;
+    width = (rect.width - box.horizontalSum) / 3;
+    left = box.paddingLeft + 2 * width;
+    height = rect.height - box.verticalSum;
+    break;
+  case DockZone.RootBottom:
+    height = (rect.height - box.verticalSum) / 3;
+    top = box.paddingTop + 2 * height;
+    left = box.paddingLeft;
+    width = rect.width - box.horizontalSum;
+    break;
+  case DockZone.RootCenter:
+    top = box.paddingTop;
+    left = box.paddingLeft;
+    width = rect.width - box.horizontalSum;
+    height = rect.height - box.verticalSum;
+    break;
+  case DockZone.PanelTop:
+    pcr = target.panel.node.getBoundingClientRect();
+    top = pcr.top - rect.top - box.borderTop;
+    left = pcr.left - rect.left - box.borderLeft;
+    width = pcr.width;
+    height = pcr.height / 2;
+    break;
+  case DockZone.PanelLeft:
+    pcr = target.panel.node.getBoundingClientRect();
+    top = pcr.top - rect.top - box.borderTop;
+    left = pcr.left - rect.left - box.borderLeft;
+    width = pcr.width / 2;
+    height = pcr.height;
+    break;
+  case DockZone.PanelRight:
+    pcr = target.panel.node.getBoundingClientRect();
+    top = pcr.top - rect.top - box.borderTop;
+    left = pcr.left - rect.left - box.borderLeft + pcr.width / 2;
+    width = pcr.width / 2;
+    height = pcr.height;
+    break;
+  case DockZone.PanelBottom:
+    pcr = target.panel.node.getBoundingClientRect();
+    top = pcr.top - rect.top - box.borderTop + pcr.height / 2;
+    left = pcr.left - rect.left - box.borderLeft;
+    width = pcr.width;
+    height = pcr.height / 2;
+    break;
+  case DockZone.PanelCenter:
+    pcr = target.panel.node.getBoundingClientRect();
+    top = pcr.top - rect.top - box.borderTop;
+    left = pcr.left - rect.left - box.borderLeft;
+    width = pcr.width;
+    height = pcr.height;
+    break;
+  }
+
+  // Show the overlay and return the dock zone.
+  getOverlay(panel).show(target.zone, left, top, width, height);
+  return target.zone;
+}
+
+
+/**
+ * Drop a widget onto a dock panel using the given dock target.
+ */
+function handleDrop(panel: DockPanel, widget: Widget, target: IDockTarget): void {
+  // Do nothing if the dock zone is invalid.
+  if (target.zone === DockZone.Invalid) {
+    return;
+  }
+
+  // Handle the simple case of root drops first.
+  switch(target.zone) {
+  case DockZone.RootTop:
+    panel.insertTop(widget);
+    return;
+  case DockZone.RootLeft:
+    panel.insertLeft(widget);
+    return;
+  case DockZone.RootRight:
+    panel.insertRight(widget);
+    return;
+  case DockZone.RootBottom:
+    panel.insertBottom(widget);
+    return;
+  case DockZone.RootCenter:
+    panel.insertLeft(widget);
+    return;
+  }
+
+  // Otherwise, it's a panel drop, and that requires more checks.
+
+  // Do nothing if the widget is dropped as a tab on its own panel.
+  if (target.zone === DockZone.PanelCenter) {
+    if (target.panel.widgets.contains(widget)) {
+      return;
+    }
+  }
+
+  // Do nothing if the panel only contains the drop widget.
+  if (target.panel.widgets.length === 1) {
+    if (target.panel.widgets.get(0) === widget) {
+      return;
+    }
+  }
+
+  // Find a suitable reference widget for the drop.
+  let ref = target.panel.widgets.get(-1);
+  if (ref === widget) {
+    ref = target.panel.widgets.get(-2);
+  }
+
+  // Insert the widget based on the panel zone.
+  switch(target.zone) {
+  case DockZone.PanelTop:
+    panel.insertTop(widget, ref);
+    return;
+  case DockZone.PanelLeft:
+    panel.insertLeft(widget, ref);
+    return;
+  case DockZone.PanelRight:
+    panel.insertRight(widget, ref);
+    return;
+  case DockZone.PanelBottom:
+    panel.insertBottom(widget, ref);
+    return;
+  case DockZone.PanelCenter:
+    panel.insertTabAfter(widget, ref);
+    selectWidget(widget);
+    return;
+  }
 }
