@@ -5,15 +5,11 @@
 |
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
-'use-strict';
+'use strict';
 
 import {
   Widget
 } from 'phosphor-widget';
-
-import {
-  Tab
-} from 'phosphor-tabs';
 
 import {
   DockPanel
@@ -23,54 +19,50 @@ import './index.css';
 
 
 function createContent(title: string): Widget {
-  var widget = new Widget();
+  let widget = new Widget();
   widget.addClass('content');
   widget.addClass(title.toLowerCase());
-
-  var tab = new Tab(title);
-  tab.closable = true;
-  DockPanel.setTab(widget, tab);
-
+  widget.title.text = title;
+  widget.title.closable = true;
   return widget;
 }
 
 
 function main(): void {
-  var r1 = createContent('Red');
-  var r2 = createContent('Red');
-  var r3 = createContent('Red');
+  let r1 = createContent('Red');
+  let r2 = createContent('Red');
+  let r3 = createContent('Red');
 
-  var b1 = createContent('Blue');
-  var b2 = createContent('Blue');
-  var b3 = createContent('Blue');
+  let b1 = createContent('Blue');
+  let b2 = createContent('Blue');
+  let b3 = createContent('Blue');
 
-  var g1 = createContent('Green');
-  var g2 = createContent('Green');
-  var g3 = createContent('Green');
+  let g1 = createContent('Green');
+  let g2 = createContent('Green');
+  let g3 = createContent('Green');
 
-  var y1 = createContent('Yellow');
-  var y2 = createContent('Yellow');
-  var y3 = createContent('Yellow');
+  let y1 = createContent('Yellow');
+  let y2 = createContent('Yellow');
+  let y3 = createContent('Yellow');
 
-  var panel = new DockPanel();
+  let panel = new DockPanel();
   panel.id = 'main';
 
-  panel.splitLeft(null, b1);
-  panel.tabify(b1, y2);
-  panel.tabify(b1, r1);
+  panel.insertLeft(r1);
 
-  panel.splitRight(b1, r2);
-  panel.tabify(r2, b2);
+  panel.insertRight(b1, r1);
+  panel.insertBottom(y1, b1);
+  panel.insertLeft(g1, y1);
 
-  panel.splitBottom(r2, r3);
-  panel.tabify(r3, y1);
+  panel.insertBottom(b2);
 
-  panel.splitLeft(y1, g1);
-
-  panel.splitBottom(null, g2);
-  panel.tabify(g2, y3);
-  panel.tabify(g2, g3);
-  panel.tabify(g2, b3);
+  panel.insertTabBefore(y2, r1);
+  panel.insertTabBefore(b3, y2);
+  panel.insertTabBefore(g2, b2);
+  panel.insertTabBefore(y3, g2);
+  panel.insertTabBefore(g3, y3);
+  panel.insertTabBefore(r2, b1);
+  panel.insertTabBefore(r3, y1);
 
   Widget.attach(panel, document.body);
 
