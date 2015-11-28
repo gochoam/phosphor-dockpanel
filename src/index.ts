@@ -15,6 +15,10 @@ import {
 } from 'phosphor-domutil';
 
 import {
+  Drag, DropAction, DropActions, IDragEvent, MimeData
+} from 'phosphor-dragdrop';
+
+import {
   Message
 } from 'phosphor-messaging';
 
@@ -41,10 +45,6 @@ import {
 import {
   Widget
 } from 'phosphor-widget';
-
-import {
-  Drag, DropAction, DropActions, IDragEvent, MimeData
-} from './drag';
 
 import './index.css';
 
