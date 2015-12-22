@@ -5,9 +5,13 @@
 |
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
-.p-DockPanel,
-.p-DockPanel > .p-DockTabPanel,
-.p-DockPanel > .p-DockSplitPanel {
+.p-DockPanel {
+  position: relative;
+}
+
+
+.p-DockPanel > .p-Widget {
+  position: absolute;
   z-index: 0;
 }
 
@@ -24,7 +28,7 @@
 }
 
 
-.p-Tab.p-mod-hidden,
+.p-TabBar-tab.p-mod-hidden,
 .p-DockPanelOverlay.p-mod-hidden {
   display: none;
 }
