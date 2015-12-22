@@ -1,6 +1,6 @@
 {
   "name": "phosphor-dockpanel",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "A widget which provides a flexible docking area for content widgets.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
