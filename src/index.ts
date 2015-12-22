@@ -57,11 +57,6 @@ import './index.css';
 const DOCK_PANEL_CLASS = 'p-DockPanel';
 
 /**
- * The class name added to dock tab bars.
- */
-const TAB_BAR_CLASS = 'p-DockTabBar';
-
-/**
  * The class name added to dock tab panels.
  */
 const TAB_PANEL_CLASS = 'p-DockTabPanel';
@@ -74,7 +69,7 @@ const SPLIT_PANEL_CLASS = 'p-DockSplitPanel';
 /**
  * The class name added to dock panel overlays.
  */
-const OVERLAY_CLASS = 'p-DockPanelOverlay';
+const OVERLAY_CLASS = 'p-DockPanel-overlay';
 
 /**
  * The class name added to hidden overlays and tabs.
