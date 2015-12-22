@@ -151,6 +151,7 @@ class DockPanel extends Widget {
    * If the widget is not contained in a dock panel, or is already
    * the selected tab in its respective tab panel, this is a no-op.
    */
+  // TODO figure out the right API for this.
   // static select(widget: Widget): void {
   //   selectWidget(widget);
   // }
@@ -734,8 +735,6 @@ namespace DockPanelPrivate {
     splitPanel.insertChild(i, childSplit);
     splitPanel.setSizes(sizes);
     childSplit.setSizes([1, 1]);
-
-
   }
 
   /**
