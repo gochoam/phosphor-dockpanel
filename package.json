@@ -13,7 +13,7 @@
     "phosphor-properties": "^2.0.0",
     "phosphor-splitpanel": "^1.0.0-rc.1",
     "phosphor-stackedpanel": "^1.0.0-rc.0",
-    "phosphor-tabs": "^1.0.0-rc.0",
+    "phosphor-tabs": "^1.0.0-rc.1",
     "phosphor-widget": "^1.0.0-rc.0"
   },
   "devDependencies": {
