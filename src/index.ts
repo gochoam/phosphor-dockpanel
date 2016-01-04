@@ -157,6 +157,11 @@ class DockPanel extends Widget {
   // }
 
   /**
+   * The static type of the constructor.
+   */
+  'constructor': typeof DockPanel;
+
+  /**
    * Construct a new dock panel.
    */
   constructor() {
@@ -476,68 +481,7 @@ class DockTabPanel extends TabPanel {
     super();
     this.addClass(TAB_PANEL_CLASS);
     this.tabBar.tabsMovable = true;
-    this.tabBar.tabDetachRequested.connect(this._onTabDetachRequested, this);
   }
-
-  /**
-   * Dispose of the resources held by the tab bar.
-   */
-  dispose(): void {
-    if (this._drag) {
-      this._drag.dispose();
-      this._drag = null;
-    }
-    super.dispose();
-  }
-
-  /**
-   * Handle the `widgetRemoved` signal for the stacked panel.
-   */
-  protected onWidgetRemoved(sender: StackedPanel, child: Widget) {
-    super.onWidgetRemoved(sender, child);
-    if (sender.childCount() === 0) {
-      DockPanelPrivate.removeTabPanel(this);
-    }
-  }
-
-  /**
-   * Handle the `tabDetachRequested` signal for the tab bar.
-   */
-  private _onTabDetachRequested(sender: TabBar, args: ITabDetachArgs): void {
-    // Do nothing if a drag is already in progress.
-    if (this._drag) {
-      return;
-    }
-
-    // Release the tab bar's hold on the mouse.
-    sender.releaseMouse();
-
-    // Setup the mime data for the drag operation.
-    let mimeData = new MimeData();
-    let widget = this.findWidgetByTitle(args.title);
-    mimeData.setData(FACTORY_MIME, () => widget);
-
-    // Create the drag image for the drag operation.
-    let tab = args.node;
-    let dragImage = tab.cloneNode(true) as HTMLElement;
-
-    // Create the drag object to manage the drag-drop operation.
-    this._drag = new Drag({
-      mimeData: mimeData,
-      dragImage: dragImage,
-      proposedAction: DropAction.Move,
-      supportedActions: DropActions.Move,
-    });
-
-    // Start the drag operation and cleanup when done.
-    tab.classList.add(HIDDEN_CLASS);
-    this._drag.start(args.clientX, args.clientY).then(() => {
-      this._drag = null;
-      tab.classList.remove(HIDDEN_CLASS);
-    });
-  }
-
-  private _drag: Drag = null;
 }
 
 
@@ -659,7 +603,7 @@ namespace DockPanelPrivate {
     widget.parent = null;
 
     // Setup the new tab panel to host the widget.
-    let tabPanel = new DockTabPanel();
+    let tabPanel = createTabPanel();
     tabPanel.addChild(widget);
 
     // If there is no root, add the new tab panel as the root.
@@ -776,7 +720,6 @@ namespace DockPanelPrivate {
    * This ensures that the hierarchy is kept consistent by merging an
    * ancestor split panel when it contains only a single child widget.
    */
-  export
   function removeTabPanel(tabPanel: DockTabPanel): void {
     // Assert the tab panel is empty.
     if (tabPanel.childCount() !== 0) {
@@ -1138,7 +1081,7 @@ namespace DockPanelPrivate {
     if (!root) return;
     let layout = owner.layout as StackedLayout;
     layout.addChild(root);
-    layout.currentWidget = root;
+    root.show();
   }
 
   /**
@@ -1259,7 +1202,7 @@ namespace DockPanelPrivate {
   function ensureFirstTabPanel(owner: DockPanel): DockTabPanel {
     let tabs = findFirstTabPanel(owner);
     if (!tabs) {
-      tabs = new DockTabPanel();
+      tabs = createTabPanel();
       setRoot(owner, tabs);
     }
     return tabs;
@@ -1288,7 +1231,6 @@ namespace DockPanelPrivate {
     let newRoot = new DockSplitPanel(orientation, owner.spacing);
     newRoot.addChild(oldRoot);
     setRoot(owner, newRoot);
-    oldRoot.show();
     return newRoot;
   }
 
@@ -1417,5 +1359,66 @@ namespace DockPanelPrivate {
       }
     }
     return zone;
+  }
+
+  /**
+   * The current tab drag object.
+   */
+  let currentDrag: Drag = null;
+
+  /**
+   * Create a new tab panel for a dock panel.
+   */
+  function createTabPanel(): DockTabPanel {
+    let panel = new DockTabPanel();
+    panel.tabBar.tabDetachRequested.connect(onTabDetachRequested);
+    panel.stackedPanel.widgetRemoved.connect(onWidgetRemoved);
+    return panel;
+  }
+
+  /**
+   * Handle the `tabDetachRequested` signal from a dock tab bar.
+   */
+  function onTabDetachRequested(sender: TabBar, args: ITabDetachArgs): void {
+    // Do nothing if a drag is already in progress.
+    if (currentDrag) {
+      return;
+    }
+
+    // Release the tab bar's hold on the mouse.
+    sender.releaseMouse();
+
+    // Setup the mime data for the drag operation.
+    let mimeData = new MimeData();
+    let widget = args.item as Widget;
+    mimeData.setData(FACTORY_MIME, () => widget);
+
+    // Create the drag image for the drag operation.
+    let tab = sender.tabAt(args.index);
+    let dragImage = tab.cloneNode(true) as HTMLElement;
+
+    // Create the drag object to manage the drag-drop operation.
+    currentDrag = new Drag({
+      mimeData: mimeData,
+      dragImage: dragImage,
+      proposedAction: DropAction.Move,
+      supportedActions: DropActions.Move,
+    });
+
+    // Start the drag operation and cleanup when done.
+    tab.classList.add(HIDDEN_CLASS);
+    currentDrag.start(args.clientX, args.clientY).then(() => {
+      currentDrag = null;
+      tab.classList.remove(HIDDEN_CLASS);
+    });
+  }
+
+  /**
+   * Handle the `widgetRemvoed` signal for a dock stacked panel.
+   */
+  function onWidgetRemoved(sender: StackedPanel, widget: Widget): void {
+    if (sender.childCount() === 0) {
+      removeTabPanel(sender.parent as DockTabPanel);
+    }
   }
 }
