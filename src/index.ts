@@ -157,11 +157,6 @@ class DockPanel extends Widget {
   // }
 
   /**
-   * The static type of the constructor.
-   */
-  'constructor': typeof DockPanel;
-
-  /**
    * Construct a new dock panel.
    */
   constructor() {
