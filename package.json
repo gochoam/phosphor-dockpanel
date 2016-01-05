@@ -64,6 +64,11 @@
     "lib/*.d.ts",
     "lib/*.js"
   ],
+  "browserify": {
+    "transform": [
+      "browserify-css"
+    ]
+  },
   "keywords": [
     "dock",
     "docking",
