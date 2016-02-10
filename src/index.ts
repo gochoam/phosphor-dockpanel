@@ -143,20 +143,6 @@ const EDGE_SIZE = 30;
 export
 class DockPanel extends Widget {
   /**
-   * Ensure the specified content widget is selected.
-   *
-   * @param widget - The content widget of interest.
-   *
-   * #### Notes
-   * If the widget is not contained in a dock panel, or is already
-   * the selected tab in its respective tab panel, this is a no-op.
-   */
-  // TODO figure out the right API for this.
-  // static select(widget: Widget): void {
-  //   selectWidget(widget);
-  // }
-
-  /**
    * Construct a new dock panel.
    */
   constructor() {
@@ -261,6 +247,19 @@ class DockPanel extends Widget {
    */
   insertTabAfter(widget: Widget, ref?: Widget): void {
     DockPanelPrivate.insertTab(this, widget, ref, true);
+  }
+
+  /**
+   * Ensure the tab for the specified content widget is selected.
+   *
+   * @param widget - The content widget of interest.
+   *
+   * #### Notes
+   * If the widget is not contained in the dock panel, or is already
+   * the selected tab in its respective tab panel, this is a no-op.
+   */
+  selectWidget(widget: Widget): void {
+    DockPanelPrivate.selectWidget(this, widget);
   }
 
   /**
@@ -710,108 +709,14 @@ namespace DockPanelPrivate {
   }
 
   /**
-   * Remove an empty dock tab panel from the hierarchy.
+   * Ensure the given widget is the current widget in its tab panel.
    *
-   * This ensures that the hierarchy is kept consistent by merging an
-   * ancestor split panel when it contains only a single child widget.
+   * This is a no-op if the widget is not contained in the dock panel.
    */
-  function removeTabPanel(tabPanel: DockTabPanel): void {
-    // Assert the tab panel is empty.
-    if (tabPanel.childCount() !== 0) {
-      internalError();
-    }
-
-    // If the parent of the tab panel is a dock panel, just remove it.
-    if (tabPanel.parent instanceof DockPanel) {
-      setRoot(tabPanel.parent as DockPanel, null);
-      tabPanel.dispose();
-      return;
-    }
-
-    // Assert the tab panel parent is a dock split panel.
-    if (!(tabPanel.parent instanceof DockSplitPanel)) {
-      internalError();
-    }
-
-    // Cast the tab panel parent to a dock split panel.
-    let splitPanel = tabPanel.parent as DockSplitPanel;
-
-    // Assert the split panel has at least two children.
-    if (splitPanel.childCount() < 2) {
-      internalError();
-    }
-
-    // Dispose the tab panel to ensure its resources are released.
-    tabPanel.dispose();
-
-    // If the split panel still has multiple children, there is
-    // nothing more to do.
-    if (splitPanel.childCount() > 1) {
-      return;
-    }
-
-    // Extract the remaining child from the split panel.
-    let child = splitPanel.childAt(0);
-
-    // Assert the remaining child is a proper panel type.
-    if (!(child instanceof DockTabPanel) && !(child instanceof DockSplitPanel)) {
-      internalError();
-    }
-
-    // If the parent of the split panel is a dock panel, replace it.
-    if (splitPanel.parent instanceof DockPanel) {
-      setRoot(splitPanel.parent as DockPanel, child as RootPanel);
-      splitPanel.dispose();
-      return;
-    }
-
-    // Assert the split panel parent is a dock split panel.
-    if (!(splitPanel.parent instanceof DockSplitPanel)) {
-      internalError();
-    }
-
-    // Cast the split panel parent to a dock split panel.
-    let grandPanel = splitPanel.parent as DockSplitPanel;
-
-    // If the child is a dock tab panel, replace the split panel.
-    if (child instanceof DockTabPanel) {
-      let sizes = grandPanel.sizes();
-      let index = grandPanel.childIndex(splitPanel);
-      splitPanel.parent = null;
-      grandPanel.insertChild(index, child);
-      grandPanel.setSizes(sizes);
-      splitPanel.dispose();
-      return;
-    }
-
-    // Cast the child to a dock split panel.
-    let childSplit = child as DockSplitPanel;
-
-    // Child splitters have an orthogonal orientation to their parent.
-    // Assert the orientation of the child matches the grand parent.
-    if (childSplit.orientation !== grandPanel.orientation) {
-      internalError();
-    }
-
-    // The grand children can now be merged with their grand parent.
-    // Start by fetching the relevant current sizes and insert index.
-    let index = grandPanel.childIndex(splitPanel);
-    let childSizes = childSplit.sizes();
-    let grandSizes = grandPanel.sizes();
-
-    // Remove the split panel and store its share of the size.
-    splitPanel.parent = null;
-    let sizeShare = arrays.removeAt(grandSizes, index);
-
-    // Merge the grand children and maintain their relative size.
-    for (let i = 0; childSplit.childCount() !== 0; ++i) {
-      grandPanel.insertChild(index + i, childSplit.childAt(0));
-      arrays.insert(grandSizes, index + i, sizeShare * childSizes[i]);
-    }
-
-    // Update the grand parent sizes and dispose the removed panel.
-    grandPanel.setSizes(grandSizes);
-    splitPanel.dispose();
+  export
+  function selectWidget(owner: DockPanel, widget: Widget): void {
+    if (!dockPanelContains(owner, widget)) return;
+    (widget.parent.parent as DockTabPanel).currentWidget = widget;
   }
 
   /**
@@ -1017,7 +922,7 @@ namespace DockPanelPrivate {
       return;
     case DockZone.PanelCenter:
       owner.insertTabAfter(widget, ref);
-      selectWidget(widget);
+      selectWidget(owner, widget);
       return;
     }
   }
@@ -1230,22 +1135,6 @@ namespace DockPanelPrivate {
   }
 
   /**
-   * Ensure the given widget is the current widget in its tab panel.
-   *
-   * This is a no-op if the widget is not contained in a dock tab panel.
-   */
-  function selectWidget(widget: Widget): void {
-    let stack = widget.parent;
-    if (!stack) {
-      return;
-    }
-    let tabs = stack.parent;
-    if (tabs instanceof DockTabPanel) {
-      tabs.currentWidget = widget;
-    }
-  }
-
-  /**
    * Validate the insert arguments for a dock panel.
    *
    * This will throw an error if the target widget is null, or if the
@@ -1369,6 +1258,111 @@ namespace DockPanelPrivate {
     panel.tabBar.tabDetachRequested.connect(onTabDetachRequested);
     panel.stackedPanel.widgetRemoved.connect(onWidgetRemoved);
     return panel;
+  }
+
+  /**
+   * Remove an empty dock tab panel from the hierarchy.
+   *
+   * This ensures that the hierarchy is kept consistent by merging an
+   * ancestor split panel when it contains only a single child widget.
+   */
+  function removeTabPanel(tabPanel: DockTabPanel): void {
+    // Assert the tab panel is empty.
+    if (tabPanel.childCount() !== 0) {
+      internalError();
+    }
+
+    // If the parent of the tab panel is a dock panel, just remove it.
+    if (tabPanel.parent instanceof DockPanel) {
+      setRoot(tabPanel.parent as DockPanel, null);
+      tabPanel.dispose();
+      return;
+    }
+
+    // Assert the tab panel parent is a dock split panel.
+    if (!(tabPanel.parent instanceof DockSplitPanel)) {
+      internalError();
+    }
+
+    // Cast the tab panel parent to a dock split panel.
+    let splitPanel = tabPanel.parent as DockSplitPanel;
+
+    // Assert the split panel has at least two children.
+    if (splitPanel.childCount() < 2) {
+      internalError();
+    }
+
+    // Dispose the tab panel to ensure its resources are released.
+    tabPanel.dispose();
+
+    // If the split panel still has multiple children, there is
+    // nothing more to do.
+    if (splitPanel.childCount() > 1) {
+      return;
+    }
+
+    // Extract the remaining child from the split panel.
+    let child = splitPanel.childAt(0);
+
+    // Assert the remaining child is a proper panel type.
+    if (!(child instanceof DockTabPanel) && !(child instanceof DockSplitPanel)) {
+      internalError();
+    }
+
+    // If the parent of the split panel is a dock panel, replace it.
+    if (splitPanel.parent instanceof DockPanel) {
+      setRoot(splitPanel.parent as DockPanel, child as RootPanel);
+      splitPanel.dispose();
+      return;
+    }
+
+    // Assert the split panel parent is a dock split panel.
+    if (!(splitPanel.parent instanceof DockSplitPanel)) {
+      internalError();
+    }
+
+    // Cast the split panel parent to a dock split panel.
+    let grandPanel = splitPanel.parent as DockSplitPanel;
+
+    // If the child is a dock tab panel, replace the split panel.
+    if (child instanceof DockTabPanel) {
+      let sizes = grandPanel.sizes();
+      let index = grandPanel.childIndex(splitPanel);
+      splitPanel.parent = null;
+      grandPanel.insertChild(index, child);
+      grandPanel.setSizes(sizes);
+      splitPanel.dispose();
+      return;
+    }
+
+    // Cast the child to a dock split panel.
+    let childSplit = child as DockSplitPanel;
+
+    // Child splitters have an orthogonal orientation to their parent.
+    // Assert the orientation of the child matches the grand parent.
+    if (childSplit.orientation !== grandPanel.orientation) {
+      internalError();
+    }
+
+    // The grand children can now be merged with their grand parent.
+    // Start by fetching the relevant current sizes and insert index.
+    let index = grandPanel.childIndex(splitPanel);
+    let childSizes = childSplit.sizes();
+    let grandSizes = grandPanel.sizes();
+
+    // Remove the split panel and store its share of the size.
+    splitPanel.parent = null;
+    let sizeShare = arrays.removeAt(grandSizes, index);
+
+    // Merge the grand children and maintain their relative size.
+    for (let i = 0; childSplit.childCount() !== 0; ++i) {
+      grandPanel.insertChild(index + i, childSplit.childAt(0));
+      arrays.insert(grandSizes, index + i, sizeShare * childSizes[i]);
+    }
+
+    // Update the grand parent sizes and dispose the removed panel.
+    grandPanel.setSizes(grandSizes);
+    splitPanel.dispose();
   }
 
   /**
